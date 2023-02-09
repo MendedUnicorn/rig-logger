@@ -1,0 +1,32 @@
+.root {
+  display: flex;
+  height: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  min-width: 15em;
+  background-color: rgb(241, 237, 232);
+  padding: $m-size;
+  height: 100vh;
+}
+.sidebar__title {
+  border-bottom: 1px solid black;
+}
+
+a {
+  padding: $s-size;
+  margin-bottom: $s-size;
+  text-decoration: none;
+  border-radius: 5px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  color: black;
+}
+
+a:hover {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
