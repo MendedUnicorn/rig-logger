@@ -1,21 +1,13 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import NewSectionForm from './NewSectionFrom';
+import { v4 as uuid } from 'uuid';
+import { useDispatch, useSelector } from 'react-redux';
+import { addTrip, selectTrips } from '../slices/tripsSlice';
 
-const TripForm = () => {
-  //   const [rig, setRig] = useState('');
-  //   const [operator, setOperator] = useState('');
-  //   const [contractor, setContractor] = useState('');
-  //   const [dateFrom, setDateFrom] = useState('');
-  //   const [dateTo, setDateTo] = useState('');
-  //   const [fsm, setFsm] = useState('');
-  //   const [de, setDe] = useState('');
-  //   const [colleague, setColleague] = useState({});
-  //   const [colleagues, setColleagues] = useState([]);
-  //   const [section, setSection] = useState({});
-  //   const [sections, setSections] = useState([]);
+const TripForm = (props) => {
   const initialInputValues = {
-    rig: '',
+    rig: props.trip ? props.trip : '',
     operator: '',
     contractor: '',
     dateFrom: '',
@@ -24,13 +16,16 @@ const TripForm = () => {
     de: '',
     colleagues: [],
     run: [],
+    workedAs: [],
+    id: '',
   };
 
+  const dispatch = useDispatch();
+  const getTrips = useSelector(selectTrips);
+
   const [inputValues, setInputValues] = useState(initialInputValues);
-  const [colleague, setColleague] = useState({});
   const [name, setName] = useState('');
   const [position, setPosition] = useState('');
-  const [sections, setSections] = useState({});
 
   const handleChange = (e) => {
     setInputValues((prevState) => ({
@@ -55,23 +50,71 @@ const TripForm = () => {
     setInputValues((prev) => ({ ...prev, run: [...prev.run, data] }));
   };
 
+  const handleRemoveColleague = (e, name) => {
+    e.preventDefault();
+    setInputValues((prevState) => ({
+      ...prevState,
+      colleagues: prevState.colleagues.filter(
+        (colleague) => colleague.name.toLowerCase() !== name.toLowerCase()
+      ),
+    }));
+  };
+  const handleCheckboxChange = (e) => {
+    if (e.target.checked === true) {
+      setInputValues((prevState) => ({
+        ...prevState,
+        workedAs: [...prevState.workedAs, e.target.value],
+      }));
+    } else {
+      const selectedWorkedAs = inputValues.workedAs.filter(
+        (work) => work !== e.target.value
+      );
+      setInputValues({ ...inputValues, workedAs: [...selectedWorkedAs] });
+    }
+  };
+  const handleRemoveRun = (e, runNr) => {
+    e.preventDefault();
+    setInputValues((prevState) => ({
+      ...prevState,
+      run: [...prevState.run.filter((run) => run.run !== runNr)],
+    }));
+  };
+
+  const handleSubmitTrip = (e) => {
+    e.preventDefault();
+    let newData;
+    if (localStorage.getItem('trips')) {
+      const prevData = JSON.parse(localStorage.getItem('trips'));
+      newData = [...prevData, { ...inputValues, id: uuid() }];
+    } else {
+      newData = [inputValues, { ...inputValues, id: uuid() }];
+    }
+    localStorage.setItem('trips', JSON.stringify(newData));
+    dispatch(addTrip({ ...inputValues, id: uuid() }));
+  };
+
   return (
     <form
       className='form'
-      onSubmit={(e) => {
-        e.preventDefault();
-        console.log(inputValues);
-      }}
+      onSubmit={handleSubmitTrip}
+      onClick={() => console.log(getTrips)}
     >
       <div className='form__input-group'>
         <label htmlFor='rig'>Rig</label>
-        <input type='text' name='rig' id='rig' onChange={handleChange} />
+        <input
+          type='text'
+          name='rig'
+          id='rig'
+          onChange={handleChange}
+          value={props.trip ? props.trip.rig : inputValues.rig}
+        />
         <label htmlFor='operator'>Operator</label>
         <input
           type='text'
           name='operator'
           id='operator'
           onChange={handleChange}
+          value={props.trip ? props.trip.operator : inputValues.operator}
         />
         <label htmlFor='contractor'>Contractor</label>
         <input
@@ -79,40 +122,63 @@ const TripForm = () => {
           name='contractor'
           id='contractor'
           onChange={handleChange}
+          value={props.trip ? props.trip.contractor : inputValues.contractor}
         />
       </div>
 
-      <div className='form__input-group'>
-        <label htmlFor='workedAs'>MWD</label>
-        <input type='checkbox' id='mwd' value='mwd' name='workedAs' />
-        <label htmlFor='workedAs'>dd</label>
-        <input type='checkbox' id='dd' value='dd' name='workedAs' />
-        <label htmlFor='workedAs'>JPG Engineer</label>
-        <input type='checkbox' id='jpg' value='jpg' name='workedAs' />
-        <label htmlFor='workedAs'>Seismic Engineer</label>
-        <input
-          type='checkbox'
-          id='seismicengineer'
-          value='seismicengineer'
-          name='workedAs'
-        />
+      <div className='form__input-group--checkbox'>
+        <div className='form__input-group__checkbox-group'>
+          <label htmlFor='workedAs'>MWD</label>
+          <input
+            type='checkbox'
+            id='mwd'
+            value='mwd'
+            name='workedAs'
+            onChange={handleCheckboxChange}
+          />
+        </div>
+        <div className='form__input-group__checkbox-group'>
+          <label htmlFor='workedAs'>DD</label>
+          <input
+            type='checkbox'
+            id='dd'
+            value='dd'
+            name='workedAs'
+            onChange={handleCheckboxChange}
+          />
+        </div>
+        <div className='form__input-group__checkbox-group'>
+          <label htmlFor='workedAs'>JPG Engineer</label>
+          <input
+            type='checkbox'
+            id='jpg'
+            value='jpg'
+            name='workedAs'
+            onChange={handleCheckboxChange}
+          />
+        </div>
+        <div className='form__input-group__checkbox-group'>
+          <label htmlFor='workedAs'>Seismic Engineer</label>
+          <input
+            type='checkbox'
+            id='seismicengineer'
+            value='seismicengineer'
+            name='workedAs'
+            onChange={handleCheckboxChange}
+          />
+        </div>
       </div>
 
       <div className='form__input-group'>
-        <label htmlFor='date-from'>From</label>
+        <label htmlFor='dateFrom'>From</label>
         <input
           type='date'
-          name='date-from'
-          id='date-from'
+          name='dateFrom'
+          id='dateFrom'
           onChange={handleChange}
         />
-        <label htmlFor='date-to'>To</label>
-        <input
-          type='date'
-          name='date-to'
-          id='date-to'
-          onChange={handleChange}
-        />
+        <label htmlFor='dateTo'>To</label>
+        <input type='date' name='dateTo' id='dateTo' onChange={handleChange} />
       </div>
 
       <div className='form__input-group'>
@@ -121,39 +187,87 @@ const TripForm = () => {
         <label htmlFor='de'>DE</label>
         <input type='text' name='de' id='de' onChange={handleChange} />
       </div>
+
       <div className='form__input-group'>
         <label htmlFor='colleague'>Colleague</label>
-        <input
-          type='text'
-          name='colleague'
-          id='colleague'
-          onChange={handleNameChange}
-        />
-        <select id='positions' onChange={handlePositionChange}>
-          <option value='mwd'>MWD</option>
-          <option value='dd'>DD</option>
-          <option value='dataengineer'>Data Engineer</option>
-          <option value='mudlogger'>Mud Logger</option>
-          <option value='geologist'>Geologist</option>
-        </select>
-        <button type='button' onClick={handleAddColleague}>
-          +
-        </button>
+        <div className='form__input-group--one-line'>
+          <input
+            type='text'
+            name='colleague'
+            id='colleague'
+            onChange={handleNameChange}
+            className='form__input-group--one-line__text'
+          />
+          <select
+            id='positions'
+            onChange={handlePositionChange}
+            className='form__input-group--one-line__select'
+          >
+            <option value='mwd'>MWD</option>
+            <option value='dd'>DD</option>
+            <option value='dataengineer'>Data Engineer</option>
+            <option value='mudlogger'>Mud Logger</option>
+            <option value='geologist'>Geologist</option>
+          </select>
+          <button
+            className='button form__input-group--one-line__button'
+            type='button'
+            onClick={handleAddColleague}
+            disabled={name ? false : true}
+          >
+            +
+          </button>
+        </div>
       </div>
       <div className='form__input-group'>
-        {inputValues.colleagues.map((colleague) => {
+        {inputValues.colleagues &&
+          inputValues.colleagues.map((colleague) => {
+            return (
+              <p key={colleague.name} id={colleague.name}>
+                {colleague.name} - {colleague.position}{' '}
+                <button
+                  onClick={(e) => handleRemoveColleague(e, colleague.name)}
+                >
+                  X
+                </button>
+              </p>
+            );
+          })}
+      </div>
+      <div className='form__input-group'>
+        <NewSectionForm
+          handleAddRun={handleAddRun}
+          handleRemoveRun={handleRemoveRun}
+        />
+      </div>
+      <div className='form__input-group'>
+        {inputValues.run.map((run) => {
           return (
-            <p>
-              {colleague.name} - {colleague.position}
-            </p>
+            <div>
+              <p>
+                Run nr: {run.run} Section: {run.section}
+              </p>
+              <button onClick={(e) => handleRemoveRun(e, run.run)}>x</button>
+              {run.bha.map((tool) => {
+                return <p>{tool}</p>;
+              })}
+            </div>
           );
         })}
       </div>
-      <NewSectionForm handleAddRun={handleAddRun} />
-      <label htmlFor='notes'></label>
-      <textarea name='notes' id='notes' cols='30' rows='10'></textarea>
 
-      <button>Add Trip</button>
+      <div className='form__input-group'>
+        <label htmlFor='notes'></label>
+        <textarea
+          name='notes'
+          id='notes'
+          cols='30'
+          rows='10'
+          onChange={handleChange}
+        ></textarea>
+      </div>
+
+      <button className='button submit'>Add Trip</button>
     </form>
   );
 };

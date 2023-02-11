@@ -22,7 +22,7 @@ const NewSectionForm = ({ handleAddRun }) => {
   const [bha, setBha] = useState([]);
 
   const handleBhaChange = (data) => {
-    const tools = data.map((tool) => tool.value);
+    const tools = data.map((tool) => tool.label);
     setBha(tools);
   };
 
@@ -51,28 +51,36 @@ const NewSectionForm = ({ handleAddRun }) => {
           <label htmlFor='new-run'>Add New Run</label>
 
           <Select
+            classNamePrefix='react-select'
+            className='react-select-container'
             onChange={handleBhaChange}
             isMulti
             name='bha'
             options={toolOptions}
             closeMenuOnSelect
           />
-          <input
-            type='text'
-            name='section'
-            id='section'
-            onChange={(e) => setSection(e.target.value)}
-          />
+          <div className='form__input-group--one-line'>
+            <input
+              type='text'
+              name='section'
+              id='section'
+              onChange={(e) => setSection(e.target.value)}
+              className='form__input-group--one-line__text'
+              placeholder='Section: eg. 12.25, 8.5'
+            />
+            <div className='form__input-group--one-line__postfix'>in.</div>
 
-          <button
-            // type='button'
-            onClick={() => {
-              handleAddRun({ run, bha, section });
-              clearFields();
-            }}
-          >
-            +
-          </button>
+            <button
+              className='button form__input-group--one-line__button'
+              disabled={bha.length > 0 ? false : true}
+              onClick={() => {
+                handleAddRun({ run, bha, section });
+                clearFields();
+              }}
+            >
+              +
+            </button>
+          </div>
         </div>
       )}
     </div>

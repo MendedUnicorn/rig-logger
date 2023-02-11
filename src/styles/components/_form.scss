@@ -1,22 +1,120 @@
+.form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .form__input-group {
   display: flex;
   flex-direction: column;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  margin: 1em;
+  margin: $s-size;
+  padding: $m-size;
+  width: 35vw;
+  input {
+    margin: 0 $s-size $xs-size $s-size;
+  }
   label {
     margin-left: $s-size;
   }
-
-  input {
-    max-width: 20rem;
-    padding: $xs-size;
-    border-radius: 5px;
-    border: none;
+  .form__input-group--one-line {
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    margin: 0 $s-size $xs-size $s-size;
+    display: flex;
+    border-radius: 5px;
+    margin: $s-size;
   }
-  input[type='date'] {
-    flex-direction: row;
-    color: red;
+  .form__input-group--one-line__text {
+    flex-grow: 1;
+    margin: 0;
+    border-radius: 5px 0 0 5px;
+
+    box-shadow: none;
+    height: $l-size;
   }
+  .form__input-group--one-line__select {
+    width: auto;
+    margin: 0;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    height: $l-size;
+  }
+  .form__input-group--one-line__button {
+    width: $l-size;
+    margin: 0;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0 5px 5px 0;
+    height: $l-size;
+  }
+  .form__input-group--one-line__postfix {
+    display: flex;
+    align-items: center;
+    padding: 0 $s-size;
+  }
+}
+
+.react-select-container {
+  margin: 0 $s-size $xs-size $s-size;
+}
+.react-select__multi-value {
+  background-color: rgb(116, 153, 201);
+}
+
+input[type='text'],
+input[type='date'],
+select {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border: none;
+  padding: $xs-size;
+  border-radius: 5px;
+}
+
+.button {
+  border: none;
+  min-width: $l-size;
+  background-color: rgb(235, 239, 250);
+  border-radius: 5px;
+  padding: $xs-size;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  color: rgb(116, 153, 201);
+  font-size: $m-size;
+  font-weight: bold;
+  font-family: 'Righteous', cursive;
+  //   flex-grow: 1;
+  margin: $m-size;
+}
+
+.submit {
+  flex: 1 1 100%;
+}
+
+.button:hover {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.form__input-group--checkbox {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  flex-wrap: wrap;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  margin: $s-size;
+  padding: $m-size;
+  width: 35vw;
+}
+
+.form__input-group__checkbox-group {
+  label {
+    font-size: small;
+    font-family: 'Righteous', cursive;
+    margin: 0 $s-size;
+  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: $s-size;
+  flex: 1 1 0;
+  height: fit-content;
+  margin: 0 $s-size;
 }

@@ -1,0 +1,35 @@
+.card {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  width: 60vw;
+  margin: $l-size;
+  display: flex;
+  flex-direction: column;
+
+  border-radius: 10px;
+}
+
+.card__container {
+  padding: $s-size;
+  display: flex;
+}
+
+.card__container__info {
+  width: 40%;
+  margin: 0 auto;
+}
+.card__container__mid {
+  margin: 0 auto;
+}
+
+.card__container__end {
+  width: 40%;
+  margin: 0 auto;
+}
+.trip-length {
+  border-radius: 0 0 10px 10px;
+}
+.bar {
+  background-color: rgb(238, 255, 145);
+  height: 10px;
+  border-radius: 0 0 10px 10px;
+}
