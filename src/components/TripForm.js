@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import Select from 'react-select';
 import NewSectionForm from './NewSectionFrom';
 import { v4 as uuid } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTrip, selectTrips } from '../slices/tripsSlice';
+import { addTrip, startAddTrip } from '../slices/tripsSlice';
 
 const TripForm = (props) => {
   const initialInputValues = {
@@ -20,8 +19,26 @@ const TripForm = (props) => {
     id: '',
   };
 
+  const people = [];
+
+  const rigs = [
+    'West Phoenix',
+    'Gullfaks A',
+    'Gullfaks B',
+    'Gullfaks C',
+    'Statfjord A',
+    'Statfjord B',
+    'Statfjord C',
+    'Visund',
+    'Brage',
+    'West Bollsta',
+    'Deepsea Bergen',
+    'Deepsea Aberdeen',
+    'Deepsea Stavanger',
+    'Deepsea Atlantic',
+  ];
+
   const dispatch = useDispatch();
-  const getTrips = useSelector(selectTrips);
 
   const [inputValues, setInputValues] = useState(initialInputValues);
   const [name, setName] = useState('');
@@ -82,23 +99,11 @@ const TripForm = (props) => {
 
   const handleSubmitTrip = (e) => {
     e.preventDefault();
-    let newData;
-    if (localStorage.getItem('trips')) {
-      const prevData = JSON.parse(localStorage.getItem('trips'));
-      newData = [...prevData, { ...inputValues, id: uuid() }];
-    } else {
-      newData = [inputValues, { ...inputValues, id: uuid() }];
-    }
-    localStorage.setItem('trips', JSON.stringify(newData));
-    dispatch(addTrip({ ...inputValues, id: uuid() }));
+    dispatch(startAddTrip(inputValues));
   };
 
   return (
-    <form
-      className='form'
-      onSubmit={handleSubmitTrip}
-      onClick={() => console.log(getTrips)}
-    >
+    <form className='form' onSubmit={handleSubmitTrip}>
       <div className='form__input-group'>
         <label htmlFor='rig'>Rig</label>
         <input

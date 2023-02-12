@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { NavLink, Outlet } from 'react-router-dom';
 import { setAllTrips } from '../slices/tripsSlice';
+import { app, db } from '../firebase/firebaseConfig';
 
 const Root = () => {
   const dispatch = useDispatch();

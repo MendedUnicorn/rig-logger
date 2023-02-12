@@ -1,6 +1,8 @@
 import React from 'react';
 import { DateTime } from 'luxon';
 import { Link } from 'react-router-dom';
+import { startRemoveTrip } from '../slices/tripsSlice';
+import { useDispatch } from 'react-redux';
 const TripCard = ({ trip }) => {
   const tripLength = (dateFrom, dateTo) => {
     const from = DateTime.fromISO(dateFrom);
@@ -10,6 +12,8 @@ const TripCard = ({ trip }) => {
     return diff.toObject().days;
   };
 
+  const dispatch = useDispatch();
+
   const calculateProgressbar = (days = 0) => {
     if (days > 14) {
       return '100%';
@@ -17,8 +21,12 @@ const TripCard = ({ trip }) => {
       return (100 * days) / 14 + '%';
     }
   };
-  console.log(calculateProgressbar());
-  console.log(tripLength('2023-01-01', '2023-01-10'));
+
+  const handleDelete = (id) => {
+    console.log('clicked delete');
+    dispatch(startRemoveTrip(id));
+  };
+
   return (
     <div className='card'>
       <div className='card__container' key={trip.uuid}>
@@ -37,7 +45,12 @@ const TripCard = ({ trip }) => {
           </div>
         </div>
         <div className='card__container__edit'>
-          <Link to={`/trip/${trip.uuid}/edit`}>x</Link>
+          <button onClick={() => handleDelete(trip.id)} className='button'>
+            Delete
+          </button>
+          <Link className='button' to={`/trip/${trip.uuid}/edit`}>
+            Edit
+          </Link>
         </div>
       </div>
 

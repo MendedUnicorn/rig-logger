@@ -11,10 +11,19 @@ const NewSectionForm = ({ handleAddRun }) => {
     { value: 'arcvision', label: 'arcVISION' },
     { value: 'ecoscope', label: 'EcoScope' },
     { value: 'sonicscope', label: 'SonicScope' },
-    { value: 'adnvision475', label: 'adnVISION475' },
+    { value: 'sonicvision', label: 'sonicVISION' },
     { value: 'provision', label: 'ProVISION' },
     { value: 'terrasphere', label: 'TerraSphere' },
     { value: 'spectraphere', label: 'SpectraSphere' },
+    { value: 'seismicvision', label: 'seismicVISION' },
+    { value: 'adnvision475', label: 'adnVISION475' },
+    { value: 'adnvision675', label: 'adnVISION675' },
+    { value: 'adnvision825', label: 'adnVISION825' },
+    { value: 'sadnvisio825', label: 'sadnVISION825' },
+    { value: 'stethoscope', label: 'StethoScope' },
+    { value: 'periscope', label: 'PeriScope' },
+    { value: 'geospherehd', label: 'GeoSphere HD' },
+    { value: 'geosphere360', label: 'GeoSphere 360' },
   ];
 
   const [section, setSection] = useState('');
