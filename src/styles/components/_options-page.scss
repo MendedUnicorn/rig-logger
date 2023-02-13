@@ -1,0 +1,42 @@
+.header {
+  display: flex;
+  box-shadow: $shadow-default;
+  margin: $m-size;
+  justify-content: space-between;
+  padding: 0 $s-size;
+  min-width: 30em;
+
+  span {
+    color: brown;
+    font-weight: bold;
+  }
+  span:hover {
+    cursor: pointer;
+  }
+}
+
+.option-element {
+  border: 1px solid black;
+  margin: $s-size;
+}
+
+.option-element__main {
+  display: flex;
+  min-width: 30em;
+  border-radius: 5px;
+
+  padding: 0 0 0 $s-size;
+  justify-content: space-between;
+  button {
+    background-color: red;
+    border: none;
+    color: white;
+    padding: 0 $s-size;
+    margin: 0;
+    height: 100%;
+  }
+}
+
+.option-element__edit {
+  padding: 0 0 0 $s-size;
+}

@@ -4,6 +4,7 @@ import AddNewTripPage from '../components/AddNewTripPage';
 import OverviewPage from '../components/OverviewPage';
 import TripsPage from '../components/TripsPage';
 import EditTripPage from '../components/EditTripPage';
+import OptionsPage from '../components/OptionsPage';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: 'trip/:id/edit',
         element: <EditTripPage />,
+      },
+      {
+        path: 'options',
+        element: <OptionsPage />,
       },
     ],
   },

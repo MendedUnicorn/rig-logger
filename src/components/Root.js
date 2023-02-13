@@ -30,6 +30,7 @@ const Root = () => {
         <NavLink to='overview'>Overview</NavLink>
         <NavLink to='create'>Add new trip</NavLink>
         <NavLink to='trips'>Trips</NavLink>
+        <NavLink to='options'>Options</NavLink>
       </div>
       <div className='detail'>
         <Outlet />

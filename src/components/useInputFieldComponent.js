@@ -6,15 +6,17 @@ import { selectOptions } from '../selectors/optionsSelectors';
 import { useDispatch, useSelector } from 'react-redux';
 import CreatableSelect from 'react-select/creatable';
 
-const useInputFieldComponent = (optionCategory) => {
+const useInputFieldComponent = (optionCategory, prefill) => {
   const dispatch = useDispatch();
   const createOption = (option) => {
     return { label: option, value: option };
   };
   const data = useSelector(selectOptions(optionCategory));
-  const opts = data.map((rig) => createOption(rig.name));
+
+  const opts = data.map((opt) => createOption(opt.name));
   useEffect(() => {
     setOptions(opts);
+    setValue(prefill ? { label: prefill, value: prefill } : null);
   }, [data]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +36,11 @@ const useInputFieldComponent = (optionCategory) => {
       console.log(e, 'errir addign');
     }
   };
-  const CustomInputField = () => {
+  const CustomInputField = (props) => {
+    // useEffect(() => {
+    //   setValue(props.rig ? createOption(props.rig) : {});
+    // }, []);
+
     return (
       <CreatableSelect
         isClearable
