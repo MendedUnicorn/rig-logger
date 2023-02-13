@@ -6,8 +6,8 @@ import {
   getDocs,
   doc,
 } from 'firebase/firestore';
-import { DateTime } from 'luxon';
-import { addNewTrip, db } from '../firebase/firebaseConfig';
+
+import { db } from '../firebase/firebaseConfig';
 
 export const tripsSlice = createSlice({
   name: 'trips',

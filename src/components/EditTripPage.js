@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import TripForm from './TripForm';
+import { getTripById } from '../selectors/tripSelectors';
 
 const EditTripPage = () => {
-  const [data, setData] = useState({});
   const { id } = useParams();
-  useEffect(() => {
-    const dataFromStorage = JSON.parse(localStorage.getItem('trips'));
-    const trip = dataFromStorage.filter((t) => t.uuid === id)[0];
-    setData(trip);
-  }, []);
+
+  const data = useSelector(getTripById(id));
 
   return (
-    <div onClick={console.log(data)}>
+    <div>
       <TripForm trip={data} />
     </div>
   );

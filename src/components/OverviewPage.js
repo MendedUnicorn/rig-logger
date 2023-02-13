@@ -1,3 +1,4 @@
+import { collectionGroup } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectNumberOfTrips } from '../selectors/tripSelectors';
@@ -11,7 +12,6 @@ const OverviewPage = () => {
   const dataFiltered = useSelector(selectTripsWithDays(8, '>-'));
   const numberOfTrips = useSelector(selectNumberOfTrips);
 
-  console.log('datafilt', dataFiltered);
   return (
     <div className=''>
       <h2>Overview</h2>

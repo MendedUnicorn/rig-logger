@@ -11,3 +11,9 @@ export const selectTripsWithDays = (days, evaluator) => (state) => {
 export const selectNumberOfTrips = (state) => {
   return state.trips.length;
 };
+
+export const getTripById = (id) => (state) => {
+  return state.trips.filter((trip) => {
+    return trip.id === id;
+  })[0];
+};

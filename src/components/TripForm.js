@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import NewSectionForm from './NewSectionFrom';
-import { v4 as uuid } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTrip, startAddTrip } from '../slices/tripsSlice';
+import { startAddTrip } from '../slices/tripsSlice';
+import InputRig from './InputRig';
 
 const TripForm = (props) => {
   const initialInputValues = {
-    rig: props.trip ? props.trip : '',
+    rig: '',
     operator: '',
     contractor: '',
     dateFrom: '',
@@ -36,11 +36,21 @@ const TripForm = (props) => {
     'Deepsea Aberdeen',
     'Deepsea Stavanger',
     'Deepsea Atlantic',
+    'Noble Loyd Noble',
+    'Deepsea Yantai',
+    'Maersk Interceptor',
+    'Maersk Integrator',
+    'Maersk Integrator',
+    'Kvitebjørn',
+    'Ringhorn',
+    'Askeladden',
   ];
 
   const dispatch = useDispatch();
 
-  const [inputValues, setInputValues] = useState(initialInputValues);
+  const [inputValues, setInputValues] = useState(
+    props.trip || initialInputValues
+  );
   const [name, setName] = useState('');
   const [position, setPosition] = useState('');
 
@@ -102,6 +112,17 @@ const TripForm = (props) => {
     dispatch(startAddTrip(inputValues));
   };
 
+  const handleLoadCheckmarks = (e, arr) => {
+    arr.map((el) => {
+      if (el == e.target.value) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  };
+  console.log('porps', props.trip);
+
   return (
     <form className='form' onSubmit={handleSubmitTrip}>
       <div className='form__input-group'>
@@ -111,15 +132,16 @@ const TripForm = (props) => {
           name='rig'
           id='rig'
           onChange={handleChange}
-          value={props.trip ? props.trip.rig : inputValues.rig}
+          value={inputValues.rig}
         />
+        <InputRig></InputRig>
         <label htmlFor='operator'>Operator</label>
         <input
           type='text'
           name='operator'
           id='operator'
           onChange={handleChange}
-          value={props.trip ? props.trip.operator : inputValues.operator}
+          value={inputValues.operator}
         />
         <label htmlFor='contractor'>Contractor</label>
         <input
@@ -127,7 +149,7 @@ const TripForm = (props) => {
           name='contractor'
           id='contractor'
           onChange={handleChange}
-          value={props.trip ? props.trip.contractor : inputValues.contractor}
+          value={inputValues.contractor}
         />
       </div>
 
@@ -140,6 +162,9 @@ const TripForm = (props) => {
             value='mwd'
             name='workedAs'
             onChange={handleCheckboxChange}
+            checked={
+              props.trip && props.trip.workedAs.includes('mwd') ? true : false
+            }
           />
         </div>
         <div className='form__input-group__checkbox-group'>
@@ -150,6 +175,9 @@ const TripForm = (props) => {
             value='dd'
             name='workedAs'
             onChange={handleCheckboxChange}
+            checked={
+              props.trip && props.trip.workedAs.includes('dd') ? true : false
+            }
           />
         </div>
         <div className='form__input-group__checkbox-group'>
@@ -160,6 +188,9 @@ const TripForm = (props) => {
             value='jpg'
             name='workedAs'
             onChange={handleCheckboxChange}
+            checked={
+              props.trip && props.trip.workedAs.includes('jpg') ? true : false
+            }
           />
         </div>
         <div className='form__input-group__checkbox-group'>
@@ -170,6 +201,11 @@ const TripForm = (props) => {
             value='seismicengineer'
             name='workedAs'
             onChange={handleCheckboxChange}
+            checked={
+              props.trip && props.trip.workedAs.includes('seismicengineer')
+                ? true
+                : false
+            }
           />
         </div>
       </div>
@@ -181,16 +217,35 @@ const TripForm = (props) => {
           name='dateFrom'
           id='dateFrom'
           onChange={handleChange}
+          value={inputValues.dateFrom}
         />
         <label htmlFor='dateTo'>To</label>
-        <input type='date' name='dateTo' id='dateTo' onChange={handleChange} />
+        <input
+          type='date'
+          name='dateTo'
+          id='dateTo'
+          onChange={handleChange}
+          value={inputValues.dateFrom}
+        />
       </div>
 
       <div className='form__input-group'>
         <label htmlFor='fsm'>FSM</label>
-        <input type='text' name='fsm' id='fsm' onChange={handleChange} />
+        <input
+          type='text'
+          name='fsm'
+          id='fsm'
+          onChange={handleChange}
+          value={inputValues.fsm}
+        />
         <label htmlFor='de'>DE</label>
-        <input type='text' name='de' id='de' onChange={handleChange} />
+        <input
+          type='text'
+          name='de'
+          id='de'
+          onChange={handleChange}
+          value={inputValues.de}
+        />
       </div>
 
       <div className='form__input-group'>
@@ -269,10 +324,13 @@ const TripForm = (props) => {
           cols='30'
           rows='10'
           onChange={handleChange}
+          value={inputValues.notes}
         ></textarea>
       </div>
 
-      <button className='button submit'>Add Trip</button>
+      <button className='button submit'>
+        {props.trip ? 'Save' : 'Add Trip'}
+      </button>
     </form>
   );
 };

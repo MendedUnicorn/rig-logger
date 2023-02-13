@@ -31,5 +31,9 @@ const addNewTrip = async (trip) => {
     console.log(e);
   }
 };
+const addOptions = async (options, database) => {
+  const docRef = await addDoc(collection(db, database), options);
+  console.log('option added: ', docRef.id);
+};
 
-export { app, db, addNewTrip };
+export { app, db, addNewTrip, addOptions };

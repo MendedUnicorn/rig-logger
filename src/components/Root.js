@@ -3,10 +3,24 @@ import { useDispatch } from 'react-redux';
 import { NavLink, Outlet } from 'react-router-dom';
 import { setAllTrips } from '../slices/tripsSlice';
 import { app, db } from '../firebase/firebaseConfig';
+import { startAddOption, startSetOptions } from '../slices/optionsSlice';
 
 const Root = () => {
   const dispatch = useDispatch();
   dispatch(setAllTrips());
+  const options = [
+    'rigs',
+    'operators',
+    'contractors',
+    'fsms',
+    'des',
+    'colleagues',
+    'tools',
+  ];
+  options.forEach((opt) => dispatch(startSetOptions(opt)));
+
+  // dispatch(startAddOption('rigs', { name: 'Balder' }));
+  // dispatch(startAddOption('contractors', { name: 'Archer' }));
 
   return (
     <div className='root'>

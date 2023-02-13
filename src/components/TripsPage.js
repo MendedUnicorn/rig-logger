@@ -18,7 +18,7 @@ const TripsPage = () => {
       <p>See all your trips here</p>
       {data &&
         data.map((trip) => {
-          return <TripCard trip={trip} key={trip.uuid} />;
+          return <TripCard trip={trip} key={trip.id} />;
         })}
     </div>
   );

@@ -29,7 +29,7 @@ const TripCard = ({ trip }) => {
 
   return (
     <div className='card'>
-      <div className='card__container' key={trip.uuid}>
+      <div className='card__container'>
         <div className='card__container__info'>
           <h2>{trip.rig}</h2>
           <h4>{trip.operator}</h4>
@@ -48,7 +48,7 @@ const TripCard = ({ trip }) => {
           <button onClick={() => handleDelete(trip.id)} className='button'>
             Delete
           </button>
-          <Link className='button' to={`/trip/${trip.uuid}/edit`}>
+          <Link className='button' to={`/trip/${trip.id}/edit`}>
             Edit
           </Link>
         </div>
