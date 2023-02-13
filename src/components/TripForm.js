@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import NewSectionForm from './NewSectionFrom';
 import { useDispatch, useSelector } from 'react-redux';
 import { startAddTrip } from '../slices/tripsSlice';
-import InputRig from './InputRig';
+// import InputRig from './InputRig';
+import useInputFieldComponent from './InputRig';
 
 const TripForm = (props) => {
   const initialInputValues = {
@@ -18,6 +19,15 @@ const TripForm = (props) => {
     workedAs: [],
     id: '',
   };
+
+  const [RigInput, rig, setRig] = useInputFieldComponent('rigs');
+  const [OperatorInput, operator, setOperator] =
+    useInputFieldComponent('operators');
+  const [ContractorInput, contractor, setContractor] =
+    useInputFieldComponent('contractors');
+
+  // const [rig, setRig] = useState('');
+  // const [operator, setOperator] = useState('');
 
   const people = [];
 
@@ -121,36 +131,42 @@ const TripForm = (props) => {
       }
     });
   };
-  console.log('porps', props.trip);
 
   return (
     <form className='form' onSubmit={handleSubmitTrip}>
-      <div className='form__input-group'>
+      <div
+        className='form__input-group'
+        onClick={() => console.log(rig, operator, contractor)}
+      >
         <label htmlFor='rig'>Rig</label>
-        <input
+        {/* <input
           type='text'
           name='rig'
           id='rig'
           onChange={handleChange}
           value={inputValues.rig}
-        />
-        <InputRig></InputRig>
+        /> */}
+
+        <RigInput value={rig} setValue={setRig} />
         <label htmlFor='operator'>Operator</label>
-        <input
+        <OperatorInput />
+        {/* <input
           type='text'
           name='operator'
           id='operator'
           onChange={handleChange}
           value={inputValues.operator}
-        />
+        /> */}
+
         <label htmlFor='contractor'>Contractor</label>
-        <input
+        <ContractorInput />
+        {/* <input
           type='text'
           name='contractor'
           id='contractor'
           onChange={handleChange}
           value={inputValues.contractor}
-        />
+        /> */}
       </div>
 
       <div className='form__input-group--checkbox'>

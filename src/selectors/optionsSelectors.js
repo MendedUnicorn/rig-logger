@@ -1,5 +1,5 @@
-const selectRigOptions = (state) => {
-  return state.options.rigs;
+const selectOptions = (optionCategory) => (state) => {
+  return state.options[optionCategory];
 };
 
-export { selectRigOptions };
+export { selectOptions };
