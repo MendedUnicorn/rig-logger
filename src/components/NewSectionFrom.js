@@ -1,34 +1,15 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import Select from 'react-select';
+import { addOptions } from '../firebase/firebaseConfig';
 
 const NewSectionForm = ({ handleAddRun }) => {
-  const toolOptions = [
-    { value: 'powerdriveorbit', label: 'PowerDrive Orbit' },
-    { value: 'powerdrivexceed', label: 'PowerDrive Xceed' },
-    { value: 'powerdrivexcel', label: 'PowerDrive Xcel' },
-    { value: 'telescope', label: 'TeleScope' },
-    { value: 'trulink', label: 'TruLink' },
-    { value: 'arcvision', label: 'arcVISION' },
-    { value: 'ecoscope', label: 'EcoScope' },
-    { value: 'sonicscope', label: 'SonicScope' },
-    { value: 'sonicvision', label: 'sonicVISION' },
-    { value: 'provision', label: 'ProVISION' },
-    { value: 'terrasphere', label: 'TerraSphere' },
-    { value: 'spectraphere', label: 'SpectraSphere' },
-    { value: 'seismicvision', label: 'seismicVISION' },
-    { value: 'adnvision475', label: 'adnVISION475' },
-    { value: 'adnvision675', label: 'adnVISION675' },
-    { value: 'adnvision825', label: 'adnVISION825' },
-    { value: 'sadnvisio825', label: 'sadnVISION825' },
-    { value: 'stethoscope', label: 'StethoScope' },
-    { value: 'periscope', label: 'PeriScope' },
-    { value: 'geospherehd', label: 'GeoSphere HD' },
-    { value: 'geosphere360', label: 'GeoSphere 360' },
-  ];
-
   const [section, setSection] = useState('');
   const [run, setRun] = useState('');
   const [bha, setBha] = useState([]);
+  const toolOptions = useSelector((state) => state.options.tools).map(
+    (tool) => ({ label: tool.name, value: tool.name })
+  );
 
   const handleBhaChange = (data) => {
     const tools = data.map((tool) => tool.label);

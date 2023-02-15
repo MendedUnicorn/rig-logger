@@ -19,9 +19,19 @@ const OptionElement = ({ option, type }) => {
     <div className='option-element' key={option.id}>
       <div className='option-element__main'>
         <p>{option.name}</p>
-        <div>
-          <button onClick={() => setEditing(!editing)}>Edit</button>
-          <button onClick={() => handleDelete(option.id)}>x</button>
+        <div className='option-element__main__buttons'>
+          <button
+            className='option-element__main__buttons__edit-button'
+            onClick={() => setEditing(!editing)}
+          >
+            Edit
+          </button>
+          <button
+            className='option-element__main__buttons__delete-button'
+            onClick={() => handleDelete(option.id)}
+          >
+            x
+          </button>
         </div>
       </div>
       {editing && (

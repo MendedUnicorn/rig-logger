@@ -6,29 +6,35 @@ import { selectOptions } from '../selectors/optionsSelectors';
 import { useDispatch, useSelector } from 'react-redux';
 import CreatableSelect from 'react-select/creatable';
 
-const useInputFieldComponent = (optionCategory, prefill) => {
+const useInputFieldComponent = (
+  optionCategory,
+  prefill,
+  optionsInSelect = true
+) => {
   const dispatch = useDispatch();
-  const createOption = (option) => {
+  const createOption = (option = null) => {
     return { label: option, value: option };
   };
-  const data = useSelector(selectOptions(optionCategory));
 
-  const opts = data.map((opt) => createOption(opt.name));
+  const optionsFromStore = useSelector(selectOptions(optionCategory));
+  const optionsFormatted = optionsInSelect
+    ? optionsFromStore.map((opt) => createOption(opt.name))
+    : {};
+
   useEffect(() => {
-    setOptions(opts);
+    setOptions(optionsFormatted);
     setValue(prefill ? { label: prefill, value: prefill } : null);
-  }, [data]);
+  }, [optionsFromStore]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
-  const [value, setValue] = useState();
+  const [value, setValue] = useState(null);
 
   const handleCreate = async (inputValue) => {
     setIsLoading(true);
     try {
-      dispatch(startAddOption(optionCategory, { name: inputValue }));
+      await dispatch(startAddOption(optionCategory, { name: inputValue }));
       const newOption = createOption(inputValue);
-      setOptions((prev) => [...prev, newOption]);
       setIsLoading(false);
       setValue(newOption);
       console.log('success adding ');
@@ -37,10 +43,6 @@ const useInputFieldComponent = (optionCategory, prefill) => {
     }
   };
   const CustomInputField = (props) => {
-    // useEffect(() => {
-    //   setValue(props.rig ? createOption(props.rig) : {});
-    // }, []);
-
     return (
       <CreatableSelect
         isClearable

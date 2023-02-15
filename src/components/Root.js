@@ -16,6 +16,7 @@ const Root = () => {
     'des',
     'colleagues',
     'tools',
+    'positions',
   ];
   options.forEach((opt) => dispatch(startSetOptions(opt)));
 

@@ -1,24 +1,12 @@
 import React, { useState } from 'react';
 import NewSectionForm from './NewSectionFrom';
 import { useDispatch, useSelector } from 'react-redux';
-import { startAddTrip } from '../slices/tripsSlice';
-// import InputRig from './InputRig';
+import { startAddTrip, startUpdateTrip } from '../slices/tripsSlice';
+import { redirect, useNavigate } from 'react-router-dom';
 import useInputFieldComponent from './useInputFieldComponent';
 
 const TripForm = (props) => {
-  const initialInputValues = {
-    rig: '',
-    operator: '',
-    contractor: '',
-    dateFrom: '',
-    dateTo: '',
-    fsm: '',
-    de: '',
-    colleagues: [],
-    run: [],
-    workedAs: [],
-    id: '',
-  };
+  const navigate = useNavigate();
 
   const [RigInput, rig, setRig] = useInputFieldComponent(
     'rigs',
@@ -40,11 +28,15 @@ const TripForm = (props) => {
     'des',
     props.trip ? props.trip.de : ''
   );
-
   const [ColleagueInput, colleague, setColleague] = useInputFieldComponent(
     'colleagues',
     props.trip ? props.trip.colleague : ''
   );
+  const [PositionInput, position, setPosition] = useInputFieldComponent(
+    'positions',
+    props.trip ? props.trip.position : ''
+  );
+
   const [workedAs, setWorkedAs] = useState(
     props.trip ? props.trip.workedAs : []
   );
@@ -52,45 +44,30 @@ const TripForm = (props) => {
     props.trip ? props.trip.dateFrom : ''
   );
   const [dateTo, setDateTo] = useState(props.trip ? props.trip.dateTo : '');
+  const [colleaguesArray, setColleaguesArray] = useState(
+    props.trip ? props.trip.colleagues : []
+  );
+  const [runs, setRuns] = useState(props.trip ? props.trip.runs : []);
+  const [notes, setNotes] = useState(props.trip ? props.trip.notes : '');
 
   const dispatch = useDispatch();
 
-  const [inputValues, setInputValues] = useState(
-    props.trip || initialInputValues
-  );
-  const [name, setName] = useState('');
-  const [position, setPosition] = useState('');
+  // change handlers
 
-  const handleChange = (e) => {
-    setInputValues((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
+  const handleAddColleaguesArray = () => {
+    setColleaguesArray((prev) => [
+      ...prev,
+      { name: colleague.value, position: position.value },
+    ]);
+    setColleague('');
+    setPosition('');
   };
-  const handleNameChange = (e) => {
-    setName(e.target.value);
-  };
-  const handlePositionChange = (e) => {
-    setPosition(e.target.value);
-  };
-  const handleAddColleague = () => {
-    setInputValues((prevState) => ({
-      ...prevState,
-      colleagues: [...prevState.colleagues, { name, position }],
-    }));
-  };
-  const handleAddRun = (data) => {
-    setInputValues((prev) => ({ ...prev, run: [...prev.run, data] }));
-  };
-
-  const handleRemoveColleague = (e, name) => {
+  const handleRemoveColleaguesArray = (e, name) => {
     e.preventDefault();
-    setInputValues((prevState) => ({
-      ...prevState,
-      colleagues: prevState.colleagues.filter(
-        (colleague) => colleague.name.toLowerCase() !== name.toLowerCase()
-      ),
-    }));
+    const newColleagues = colleaguesArray.filter(
+      (colleague) => colleague.name.toLowerCase() !== name.toLowerCase()
+    );
+    setColleaguesArray(newColleagues);
   };
   const handleCheckboxChange = (e) => {
     if (e.target.checked === true) {
@@ -102,73 +79,49 @@ const TripForm = (props) => {
       setWorkedAs(selectedWorkedAs);
     }
   };
+  const handleAddRun = (data) => {
+    setRuns((prev) => [...prev, data]);
+  };
   const handleRemoveRun = (e, runNr) => {
     e.preventDefault();
-    setInputValues((prevState) => ({
-      ...prevState,
-      run: [...prevState.run.filter((run) => run.run !== runNr)],
-    }));
+    setRuns((prev) => prev.filter((run) => run.run !== runNr));
   };
 
   const handleSubmitTrip = (e) => {
     e.preventDefault();
-    // dispatch(startAddTrip(inputValues));
     const dataToSubmit = {
-      rig: rig.value,
-      operator: operator.value,
-      contractor: contractor.value,
+      rig: rig ? rig.value : '',
+      operator: operator ? operator.value : '',
+      contractor: contractor ? contractor.value : '',
       workedAs,
       dateFrom,
       dateTo,
-      fsm: fsm.value,
-      de: de.value,
-      colleague: colleague.value,
+      fsm: fsm ? fsm.value : '',
+      de: de ? de.value : '',
+      colleagues: colleaguesArray,
+      runs,
+      notes,
     };
-    console.log();
-  };
-
-  const handleLoadCheckmarks = (e, arr) => {
-    arr.map((el) => {
-      if (el == e.target.value) {
-        return true;
-      } else {
-        return false;
-      }
-    });
+    if (props.trip) {
+      dispatch(startUpdateTrip(props.trip.id, dataToSubmit));
+    } else {
+      // add record
+      dispatch(startAddTrip(dataToSubmit));
+    }
+    redirect('/trips');
+    navigate('/trips');
   };
 
   return (
     <form className='form' onSubmit={handleSubmitTrip}>
       <div className='form__input-group'>
         <label htmlFor='rig'>Rig</label>
-        {/* <input
-          type='text'
-          name='rig'
-          id='rig'
-          onChange={handleChange}
-          value={inputValues.rig}
-        /> */}
-
         <RigInput />
         <label htmlFor='operator'>Operator</label>
         <OperatorInput />
-        {/* <input
-          type='text'
-          name='operator'
-          id='operator'
-          onChange={handleChange}
-          value={inputValues.operator}
-        /> */}
 
         <label htmlFor='contractor'>Contractor</label>
         <ContractorInput />
-        {/* <input
-          type='text'
-          name='contractor'
-          id='contractor'
-          onChange={handleChange}
-          value={inputValues.contractor}
-        /> */}
       </div>
 
       <div className='form__input-group--checkbox'>
@@ -239,65 +192,36 @@ const TripForm = (props) => {
 
       <div className='form__input-group'>
         <label htmlFor='fsm'>FSM</label>
-        {/* <input
-          type='text'
-          name='fsm'
-          id='fsm'
-          onChange={handleChange}
-          value={inputValues.fsm}
-        /> */}
         <FsmInput />
         <label htmlFor='de'>DE</label>
-        {/* <input
-          type='text'
-          name='de'
-          id='de'
-          onChange={handleChange}
-          value={inputValues.de}
-        /> */}
         <DeInput />
       </div>
 
       <div className='form__input-group'>
         <label htmlFor='colleague'>Colleague</label>
         <div className='form__input-group--one-line'>
-          {/* <input
-            type='text'
-            name='colleague'
-            id='colleague'
-            onChange={handleNameChange}
-            className='form__input-group--one-line__text'
-          /> */}
           <ColleagueInput />
-          <select
-            id='positions'
-            onChange={handlePositionChange}
-            className='form__input-group--one-line__select'
-          >
-            <option value='mwd'>MWD</option>
-            <option value='dd'>DD</option>
-            <option value='dataengineer'>Data Engineer</option>
-            <option value='mudlogger'>Mud Logger</option>
-            <option value='geologist'>Geologist</option>
-          </select>
+          <PositionInput />
           <button
             className='button form__input-group--one-line__button'
             type='button'
-            onClick={handleAddColleague}
-            disabled={name ? false : true}
+            onClick={handleAddColleaguesArray}
+            disabled={colleaguesArray ? false : true}
           >
             +
           </button>
         </div>
       </div>
       <div className='form__input-group'>
-        {inputValues.colleagues &&
-          inputValues.colleagues.map((colleague) => {
+        {colleaguesArray &&
+          colleaguesArray.map((colleague) => {
             return (
               <p key={colleague.name} id={colleague.name}>
                 {colleague.name} - {colleague.position}{' '}
                 <button
-                  onClick={(e) => handleRemoveColleague(e, colleague.name)}
+                  onClick={(e) =>
+                    handleRemoveColleaguesArray(e, colleague.name)
+                  }
                 >
                   X
                 </button>
@@ -305,6 +229,7 @@ const TripForm = (props) => {
             );
           })}
       </div>
+
       <div className='form__input-group'>
         <NewSectionForm
           handleAddRun={handleAddRun}
@@ -312,19 +237,20 @@ const TripForm = (props) => {
         />
       </div>
       <div className='form__input-group'>
-        {inputValues.run.map((run) => {
-          return (
-            <div>
-              <p>
-                Run nr: {run.run} Section: {run.section}
-              </p>
-              <button onClick={(e) => handleRemoveRun(e, run.run)}>x</button>
-              {run.bha.map((tool) => {
-                return <p>{tool}</p>;
-              })}
-            </div>
-          );
-        })}
+        {runs &&
+          runs.map((run, i) => {
+            return (
+              <div key={i}>
+                <p>
+                  Run nr: {run.run} Section: {run.section}
+                </p>
+                <button onClick={(e) => handleRemoveRun(e, run.run)}>x</button>
+                {run.bha.map((tool) => {
+                  return <p>{tool}</p>;
+                })}
+              </div>
+            );
+          })}
       </div>
 
       <div className='form__input-group'>
@@ -334,8 +260,8 @@ const TripForm = (props) => {
           id='notes'
           cols='30'
           rows='10'
-          onChange={handleChange}
-          value={inputValues.notes}
+          onChange={(e) => setNotes(e.target.value)}
+          value={notes}
         ></textarea>
       </div>
 

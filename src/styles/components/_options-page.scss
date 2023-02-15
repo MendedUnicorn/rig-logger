@@ -1,4 +1,4 @@
-.header {
+.options-header {
   display: flex;
   box-shadow: $shadow-default;
   margin: $m-size;
@@ -14,26 +14,68 @@
     cursor: pointer;
   }
 }
-
+.options-container {
+  margin: $m-size;
+  box-shadow: $shadow-default;
+  width: 30em;
+  padding: $s-size;
+}
+.options-container__input {
+  margin: $m-size;
+}
 .option-element {
-  border: 1px solid black;
+  box-shadow: $shadow-default;
   margin: $s-size;
 }
 
 .option-element__main {
   display: flex;
-  min-width: 30em;
   border-radius: 5px;
-
   padding: 0 0 0 $s-size;
   justify-content: space-between;
-  button {
-    background-color: red;
-    border: none;
-    color: white;
-    padding: 0 $s-size;
-    margin: 0;
-    height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.option-element__main:hover .option-element__main__buttons {
+  opacity: 1;
+  right: 0em;
+  transition: right 0.5s ease-in;
+}
+
+.option-element__main__buttons {
+  opacity: 1;
+  width: fit-content;
+  transition: width 0.3s linear;
+  position: absolute;
+  right: -5em;
+  display: flex;
+  height: 100%;
+  transition: right 0.5s ease-in;
+}
+
+.option-element__main__buttons__edit-button,
+.option-element__main__buttons__delete-button {
+  border: none;
+  height: 100%;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: bold;
+}
+.option-element__main__buttons__edit-button {
+  width: 3em;
+  background-color: rgb(234, 234, 253);
+  color: rgb(134, 134, 165);
+
+  &:hover {
+    border: 3px solid rgb(207, 207, 235);
+  }
+}
+.option-element__main__buttons__delete-button {
+  width: 2em;
+  background-color: rgb(247, 201, 201);
+  color: rgb(168, 78, 78);
+  &:hover {
+    border: 3px solid rgb(168, 78, 78);
   }
 }
 

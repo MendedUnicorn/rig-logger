@@ -15,6 +15,7 @@ const initialState = {
   contractors: [],
   fsms: [],
   des: [],
+  positions: [],
   colleagues: [],
   tools: [],
 };
