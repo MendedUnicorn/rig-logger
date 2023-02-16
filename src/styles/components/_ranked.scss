@@ -1,0 +1,19 @@
+.ranked-card {
+  box-shadow: $shadow-default;
+  padding: $m-size;
+  margin: $m-size;
+  border-radius: $s-size;
+  display: flex;
+  width: 20em;
+  table {
+    flex: 1;
+    border-spacing: 0;
+    padding: $m-size;
+    min-width: 50%;
+  }
+  td {
+    border-bottom: 1px solid rgb(206, 206, 206);
+    margin: 0;
+    padding: $xs-size;
+  }
+}

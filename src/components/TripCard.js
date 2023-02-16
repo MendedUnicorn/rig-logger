@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { Link } from 'react-router-dom';
 import { startRemoveTrip } from '../slices/tripsSlice';
 import { useDispatch } from 'react-redux';
+import { setLogLevel } from 'firebase/app';
 const TripCard = ({ trip }) => {
   const tripLength = (dateFrom, dateTo) => {
     const from = DateTime.fromISO(dateFrom);
@@ -40,15 +41,28 @@ const TripCard = ({ trip }) => {
         <div className='card__container__end'>
           <h5>{trip.workedAs}</h5>
           <div className='card__container__end__dates'>
-            <p>From: {trip.dateFrom}</p>
-            <p>To: {trip.dateTo}</p>
+            <p>
+              From:{' '}
+              <span>
+                {DateTime.fromISO(trip.dateFrom).toFormat('dd LLL, yy')}
+              </span>
+            </p>
+            <p>
+              To:{' '}
+              <span>
+                {DateTime.fromISO(trip.dateTo).toFormat('dd LLL, yy')}
+              </span>
+            </p>
           </div>
         </div>
         <div className='card__container__edit'>
-          <button onClick={() => handleDelete(trip.id)} className='button'>
+          <button
+            onClick={() => handleDelete(trip.id)}
+            className='button--card'
+          >
             Delete
           </button>
-          <Link className='button' to={`/trip/${trip.id}/edit`}>
+          <Link className='button--card' to={`/trip/${trip.id}/edit`}>
             Edit
           </Link>
         </div>

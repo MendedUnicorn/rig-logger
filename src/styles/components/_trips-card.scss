@@ -11,6 +11,12 @@
 .card__container {
   padding: $s-size;
   display: flex;
+  position: relative;
+  overflow: hidden;
+}
+.card__container:hover > .card__container__edit {
+  right: 0;
+  transition: right 0.4s ease-in;
 }
 
 .card__container__info {
@@ -22,14 +28,57 @@
 }
 
 .card__container__end {
-  width: 40%;
+  width: 25%;
   margin: 0 auto;
 }
+.card__container__end__dates {
+  position: relative;
+  span {
+    position: absolute;
+    right: 0;
+  }
+}
+.card__container__edit {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: antiquewhite;
+  position: absolute;
+  right: -40px;
+  bottom: 0px;
+  height: 100%;
+  width: 2em;
+  border-radius: 0 5px 5px 0;
+  overflow: hidden;
+  button {
+    background-color: rgb(245, 189, 189);
+    border-radius: 0 5px 0px 0;
+    transform: rotate(90deg);
+    vertical-align: center;
+    transform: rotate(90deg) translate(30px, 5px);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  a {
+    transform: rotate(90deg) translate(35px, 5px);
+    background-color: rgb(223, 248, 255);
+  }
+}
+.button--card {
+  border: none;
+  background-color: none;
+  box-shadow: none;
+  height: 50px;
+  padding: $m-size !important;
+  margin: 0;
+  width: 100px;
+  transform-origin: top;
+}
+
 .trip-length {
   border-radius: 0 0 10px 10px;
 }
 .bar {
-  background-color: rgb(238, 255, 145);
+  background-color: rgba(78, 146, 14, 0.144);
   height: 10px;
   border-radius: 0 0 10px 10px;
 }

@@ -15,7 +15,6 @@ export const tripsSlice = createSlice({
   initialState: [],
   reducers: {
     setTrips: (state, action) => {
-      console.log('s', state);
       return action.payload;
     },
     addTrip: (state, action) => {
@@ -46,7 +45,7 @@ export const setAllTrips = () => async (dispatch) => {
 };
 export const startAddTrip = (trip) => async (dispatch) => {
   const docRef = await addDoc(collection(db, 'trips'), trip);
-  dispatch(tripsSlice.actions.addTrip({ ...trip, id: docRef.id }));
+  await dispatch(tripsSlice.actions.addTrip({ ...trip, id: docRef.id }));
 };
 export const startRemoveTrip = (id) => async (dispatch) => {
   await deleteDoc(doc(db, 'trips', id));

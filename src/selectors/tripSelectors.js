@@ -1,16 +1,36 @@
+import { DateTime } from 'luxon';
 import { countEachOccurence, findTopBottomX } from '../helpers/calculate';
 import { tripLength as trip } from '../helpers/formatting';
 
-const tripLength = trip;
+export const selectTripsWithDaysMoreLessEqualToX =
+  (days, evaluator) => (state) => {
+    return state.trips.filter((trip) => {
+      return eval(
+        'tripLength(trip.dateFrom, trip.dateTo)' + evaluator + 'days'
+      );
+    });
+  };
 
-export const selectTripsWithDays = (days, evaluator) => (state) => {
-  return state.trips.filter((trip) => {
-    return eval('tripLength(trip.dateFrom, trip.dateTo)' + evaluator + 'days');
-  });
+export const selectTotalAmountOfTrips = (state) => {
+  return state.trips.length;
 };
 
-export const selectNumberOfTrips = (state) => {
-  return state.trips.length;
+export const selectTripsSortedBy = (sortBy) => (state) => {
+  return [...state.trips].sort((a, b) => {
+    if (sortBy === 'date') {
+      return DateTime.fromISO(a.dateFrom).toMillis() <
+        DateTime.fromISO(b.dateFrom).toMillis()
+        ? 1
+        : -1;
+    } else if (sortBy === 'length') {
+      return DateTime.fromISO(a.dateTo).diff(DateTime.fromISO(a.dateFrom)) >
+        DateTime.fromISO(b.dateTo).diff(DateTime.fromISO(b.dateFrom))
+        ? 1
+        : -1;
+    } else if (sortBy === 'rig') {
+      return a.rig > b.rig ? 1 : -1;
+    }
+  });
 };
 
 export const getTripById = (id) => (state) => {
@@ -19,37 +39,102 @@ export const getTripById = (id) => (state) => {
   })[0];
 };
 
-// export const selectTopXOfY = (x, y) => (state) => {
-//   const number = x;
-//   const category = y;
-//   let toBeChecked = state?.trips[0][category];
-//   if (typeof toBeChecked === 'object') {
-//     const res = [];
-//     state?.trips.forEach((trip) => {
-//       trip[category]?.forEach((thing) => res.push(thing.name));
-//     });
-//     console.log('ress', res);
-//     return res;
-//   }
-//   return findTopBottomX(
-//     countEachOccurence(
-//       state.trips.map((trip) => {
-//         return trip[y];
-//       })
-//     ),
-//     x
-//   );
-// };
 export const selectTopBottomColleague = (rank) => (state) => {
   const workedWith = [];
   state.trips.forEach((trip) => {
-    console.log(trip);
     if (trip.colleagues) {
       trip.colleagues.map((colleague) => {
-        console.log(colleague.name);
         workedWith.push(colleague.name);
       });
     }
   });
-  return workedWith;
+  return findTopBottomX(countEachOccurence(workedWith), rank);
+};
+// retunrs a ranked array with objects containing name and amount of that name
+export const selectTopBottomXofY = (category, rank) => (state) => {
+  return findTopBottomX(
+    countEachOccurence(
+      state.trips
+        .filter((trip) => trip[category])
+        .map((trip) => {
+          return trip[category];
+        })
+    ),
+    rank
+  );
+};
+
+// return trips that has days falling between interval
+export const selectBetweenDates = (start, end) => (state) => {
+  const formatStart = DateTime.fromISO(start);
+  const formatEnd = DateTime.fromISO(end);
+
+  return state.trips.filter((trip) => {
+    const formatTripStart = DateTime.fromISO(trip.dateFrom);
+    const formatTripEnd = DateTime.fromISO(trip.dateTo);
+    if ((trip.dateFrom === '') | (trip.dateTo === '')) {
+      return;
+    }
+    if (formatTripStart > formatEnd || formatTripEnd < formatStart) {
+      return;
+    }
+    return trip;
+  });
+};
+
+// 1. create empty dataset based on input dates- 1-jan 2021 - 23 march 2022 = [{x: jan, y: nr days}, {x: feb, y: nr days} ...]
+export const selectCreateDataset = (start, end) => (state) => {
+  const formatStart = DateTime.fromISO(start);
+  const formatEnd = DateTime.fromISO(end);
+  // Filter out data to create an array of only trips that has any number of days in the range
+  const tripsWithinRange = state.trips.filter((trip) => {
+    const tripStart = DateTime.fromISO(trip.dateFrom);
+    const tripEnd = DateTime.fromISO(trip.dateTo);
+    if ((trip.dateFrom === '') | (trip.dateTo === '')) {
+      return;
+    }
+    if (tripStart > formatEnd || tripEnd < formatStart) {
+      return;
+    }
+    return trip;
+  });
+
+  // create array of dataset with all months
+  const res = [];
+  const difference = formatEnd.diff(formatStart, 'months').toObject().months;
+  let year = formatStart.year;
+  for (let i = 0; i < difference; i++) {
+    // create something that adds to year when  i > 12
+    res[i] = {
+      x: formatStart.startOf('month').plus({ month: i }).toISO(),
+      y: 0,
+    };
+  }
+  tripsWithinRange.map((trip) => {
+    const tripStart = DateTime.fromISO(trip.dateFrom);
+    const tripEnd = DateTime.fromISO(trip.dateTo);
+    // compare moth of start and end date - if same, jsut count the days, if different spread days on months
+    // console.log(tripStart.month, tripEnd.month);
+
+    if (tripStart.month === tripEnd.month) {
+      // fix issue here - not going to above 12 montjhs, just stacs between 1 and 12
+      res.forEach((d) => {
+        if (d.x === tripStart.startOf('month').toISO()) {
+          d.y = d.y + tripEnd.diff(tripStart, 'days').days + 1; // remove +1 or not? check data manually
+          // console.log('days', d.y);
+        }
+      });
+    } else {
+      // divide up the days to correct month
+      res.forEach((d) => {
+        if (d.x === tripStart.startOf('month').toISO()) {
+          d.y = d.y + tripStart.endOf('month').day - tripStart.day + 1;
+        }
+        if (d.x === tripEnd.startOf('month').toISO()) {
+          d.y = d.y + (tripEnd.day - tripEnd.startOf('month').day) + 1;
+        }
+      });
+    }
+  });
+  return res;
 };

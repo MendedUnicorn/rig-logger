@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import NewSectionForm from './NewSectionFrom';
+import SectionInput from './SectionInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { startAddTrip, startUpdateTrip } from '../slices/tripsSlice';
 import { redirect, useNavigate } from 'react-router-dom';
 import useInputFieldComponent from './useInputFieldComponent';
+import { DateTime } from 'luxon';
+import DatePickerInput from './DatePicker';
+import LocationInput from './LocationInput';
 
 const TripForm = (props) => {
   const navigate = useNavigate();
+  const [errors, setErrors] = useState([]);
 
   const [RigInput, rig, setRig] = useInputFieldComponent(
     'rigs',
@@ -41,9 +45,11 @@ const TripForm = (props) => {
     props.trip ? props.trip.workedAs : []
   );
   const [dateFrom, setDateFrom] = useState(
-    props.trip ? props.trip.dateFrom : ''
+    props.trip ? DateTime.fromISO(props.trip.dateFrom).toJSDate() : ''
   );
-  const [dateTo, setDateTo] = useState(props.trip ? props.trip.dateTo : '');
+  const [dateTo, setDateTo] = useState(
+    props.trip ? DateTime.fromISO(props.trip.dateTo).toJSDate() : ''
+  );
   const [colleaguesArray, setColleaguesArray] = useState(
     props.trip ? props.trip.colleagues : []
   );
@@ -52,8 +58,22 @@ const TripForm = (props) => {
 
   const dispatch = useDispatch();
 
-  // change handlers
+  // Sanetize
 
+  if (DateTime.fromISO(dateFrom) > DateTime.fromISO(dateTo)) {
+    setErrors((prevState) => [
+      ...prevState,
+      'Start date cannot be after end date.',
+    ]);
+  }
+
+  // change handlers
+  const handleSetStartDate = (start) => {
+    setDateFrom(start);
+  };
+  const handleSetEndDate = (end) => {
+    setDateTo(end);
+  };
   const handleAddColleaguesArray = () => {
     setColleaguesArray((prev) => [
       ...prev,
@@ -94,8 +114,8 @@ const TripForm = (props) => {
       operator: operator ? operator.value : '',
       contractor: contractor ? contractor.value : '',
       workedAs,
-      dateFrom,
-      dateTo,
+      dateFrom: dateFrom ? dateFrom.toISOString() : '',
+      dateTo: dateFrom ? dateTo.toISOString() : '',
       fsm: fsm ? fsm.value : '',
       de: de ? de.value : '',
       colleagues: colleaguesArray,
@@ -133,7 +153,7 @@ const TripForm = (props) => {
             value='mwd'
             name='workedAs'
             onChange={handleCheckboxChange}
-            checked={workedAs.includes('mwd')}
+            checked={workedAs ? workedAs.includes('mwd') : false}
           />
         </div>
         <div className='form__input-group__checkbox-group'>
@@ -144,7 +164,7 @@ const TripForm = (props) => {
             value='dd'
             name='workedAs'
             onChange={handleCheckboxChange}
-            checked={workedAs.includes('dd')}
+            checked={workedAs ? workedAs.includes('dd') : false}
           />
         </div>
         <div className='form__input-group__checkbox-group'>
@@ -155,7 +175,7 @@ const TripForm = (props) => {
             value='jpg'
             name='workedAs'
             onChange={handleCheckboxChange}
-            checked={workedAs.includes('jpg')}
+            checked={workedAs ? workedAs.includes('jpg') : false}
           />
         </div>
         <div className='form__input-group__checkbox-group'>
@@ -166,13 +186,19 @@ const TripForm = (props) => {
             value='seismicengineer'
             name='workedAs'
             onChange={handleCheckboxChange}
-            checked={workedAs.includes('seismicengineer')}
+            checked={workedAs ? workedAs.includes('seismicengineer') : false}
           />
         </div>
       </div>
 
       <div className='form__input-group'>
-        <label htmlFor='dateFrom'>From</label>
+        <DatePickerInput
+          handleSetStartDate={handleSetStartDate}
+          startDate={props.trip ? new Date(props.trip.dateFrom) : dateFrom}
+          handleSetEndDate={handleSetEndDate}
+          endDate={props.tri ? new Date(props.trip.dateTo) : dateTo}
+        />
+        {/* <label htmlFor='dateFrom'>From</label>
         <input
           type='date'
           name='dateFrom'
@@ -187,7 +213,7 @@ const TripForm = (props) => {
           id='dateTo'
           onChange={(e) => setDateTo(e.target.value)}
           value={dateTo}
-        />
+        /> */}
       </div>
 
       <div className='form__input-group'>
@@ -206,7 +232,7 @@ const TripForm = (props) => {
             className='button form__input-group--one-line__button'
             type='button'
             onClick={handleAddColleaguesArray}
-            disabled={colleaguesArray ? false : true}
+            disabled={colleague ? false : true}
           >
             +
           </button>
@@ -231,7 +257,7 @@ const TripForm = (props) => {
       </div>
 
       <div className='form__input-group'>
-        <NewSectionForm
+        <SectionInput
           handleAddRun={handleAddRun}
           handleRemoveRun={handleRemoveRun}
         />
@@ -252,7 +278,9 @@ const TripForm = (props) => {
             );
           })}
       </div>
-
+      <div className='form__input-group'>
+        <LocationInput />
+      </div>
       <div className='form__input-group'>
         <label htmlFor='notes'></label>
         <textarea
@@ -263,6 +291,10 @@ const TripForm = (props) => {
           onChange={(e) => setNotes(e.target.value)}
           value={notes}
         ></textarea>
+      </div>
+      <div className='form__input-group'>
+        <label htmlFor=''>Heliport</label>
+        <input type='text' name='' id='' />
       </div>
 
       <button className='button submit'>

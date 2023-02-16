@@ -124,10 +124,7 @@
   box-shadow: $shadow-default;
   padding: $s-size;
   border-radius: 5px;
-}
-.react-datepicker {
-  border: none;
-  box-shadow: $shadow-default;
+  margin-left: $m-size;
 }
 
 .react-datepicker__month-container {
@@ -141,7 +138,7 @@
 .react-datepicker__day {
   font-size: 2em;
   padding: 0.3em;
-  width: 1.8em !important;
+  width: 1.8em;
 }
 .react-datepicker__day-name {
   font-size: 2em;
