@@ -15,23 +15,58 @@ export const selectTotalAmountOfTrips = (state) => {
   return state.trips.length;
 };
 
-export const selectTripsSortedBy = (sortBy) => (state) => {
-  return [...state.trips].sort((a, b) => {
-    if (sortBy === 'date') {
-      return DateTime.fromISO(a.dateFrom).toMillis() <
-        DateTime.fromISO(b.dateFrom).toMillis()
-        ? 1
-        : -1;
-    } else if (sortBy === 'length') {
-      return DateTime.fromISO(a.dateTo).diff(DateTime.fromISO(a.dateFrom)) >
-        DateTime.fromISO(b.dateTo).diff(DateTime.fromISO(b.dateFrom))
-        ? 1
-        : -1;
-    } else if (sortBy === 'rig') {
-      return a.rig > b.rig ? 1 : -1;
-    }
-  });
-};
+export const selectTripsSortedBy =
+  (sortBy, filterText = '', startDate, endDate) =>
+  (state) => {
+    return [...state.trips]
+      .filter((trip) => {
+        console.log(
+          'compare',
+          DateTime.fromISO(startDate),
+          'startdata',
+          startDate,
+          'tripdate:',
+          trip.dateFrom
+        );
+        const startDateMatch = startDate
+          ? DateTime.fromISO(startDate) < DateTime.fromISO(trip.dateFrom)
+          : true;
+        const endDateMatch = endDate
+          ? DateTime.fromISO(endDate) > DateTime.fromISO(trip.dateTo)
+          : true;
+        let textMatch;
+
+        if (filterText) {
+          const tripValues = Object.values(trip);
+          for (let i = 0; i < tripValues.length; i++) {
+            if (typeof tripValues[i] !== 'object') {
+              if (
+                tripValues[i].toLowerCase().includes(filterText.toLowerCase())
+              ) {
+                textMatch = true;
+              }
+            }
+          }
+          return startDateMatch && endDateMatch && textMatch;
+        } else return startDateMatch && endDateMatch;
+      })
+
+      .sort((a, b) => {
+        if (sortBy === 'date') {
+          return DateTime.fromISO(a.dateFrom).toMillis() <
+            DateTime.fromISO(b.dateFrom).toMillis()
+            ? 1
+            : -1;
+        } else if (sortBy === 'length') {
+          return DateTime.fromISO(a.dateTo).diff(DateTime.fromISO(a.dateFrom)) >
+            DateTime.fromISO(b.dateTo).diff(DateTime.fromISO(b.dateFrom))
+            ? 1
+            : -1;
+        } else if (sortBy === 'rig') {
+          return a.rig > b.rig ? 1 : -1;
+        }
+      });
+  };
 
 export const getTripById = (id) => (state) => {
   return state.trips.filter((trip) => {

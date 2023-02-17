@@ -13,7 +13,7 @@ export const filtersSlice = createSlice({
   initialState,
   reducers: {
     setTextFilter: (state, action) => {
-      return { ...state, text: action.payload };
+      return { ...state, text: action.payload.toLowerCase() };
     },
     sortByDate: (state, action) => {
       return { ...state, sortBy: 'date' };
