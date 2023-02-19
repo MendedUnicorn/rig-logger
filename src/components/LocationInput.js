@@ -1,105 +1,110 @@
 import React, { useEffect, useState } from 'react';
 import Cleave from 'cleave.js/react';
 import { multipleInputsInOne } from '../helpers/multipleInputsInOne';
-const LocationInput = () => {
-  const [deg, setDeg] = useState('');
-  const [minutes, setMinutes] = useState('');
-  const [seconds, setSeconds] = useState('');
-  const [error, setError] = useState([]);
-  const [titude, setTitude] = useState('');
+const LocationInput = ({ handleTitude, showSimple, defaultValue }) => {
+  const [deg, setDeg] = useState(defaultValue ? Math.floor(defaultValue) : 0);
+  const [minutes, setMinutes] = useState(
+    defaultValue ? Math.floor((defaultValue % 1) * 60) : 0
+  );
+  const [seconds, setSeconds] = useState(
+    defaultValue ? ((((defaultValue % 1) * 60) % 1) * 60).toFixed(4) : 0
+  );
+  const [simpleLocation, setSimpleLocation] = useState(
+    defaultValue ? defaultValue : 0
+  );
+  const [error, setError] = useState(null);
+
   useEffect(() => {
-    const container = document.getElementById('container');
-    console.log(container);
-    multipleInputsInOne(container);
-  }, []);
-
-  const onDegBlur = (e) => {
-    const value = e.target.value;
-    if (!value.match(/[0-8]\d/g)) {
-      setError((prev) => [...prev, 'The degrees needs to be between 0 and 90']);
-    } else if (!value || value.match(/[0-8]\d/g)) {
-      setError((prev) =>
-        prev.filter((d) => d === 'The degrees needs to be between 0 and 90')
-      );
-      setDeg(value);
-    }
-  };
-  const onMinutesBlur = (e) => {
-    const value = e.target.value;
-    if (!value.match(/[0-5]\d/g)) {
-      setError((prev) => [...prev, 'The minutes needs to be between 0 and 59']);
-    } else if (!value || value.match(/[0-5]\d/g)) {
-      setError((prev) =>
-        prev.filter((d) => d === 'The minutes needs to be between 0 and 59')
-      );
-      setMinutes(value);
-    }
-  };
-  const onSecondsBlur = (e) => {
-    const value = e.target.value;
-    if (!value.match(/[0-5]\d\.\d+/g)) {
-      setError((prev) => [...prev, 'The seconds needs to be between 0 and 59']);
-    } else if (!value || value.match(/[0-5]\d\.\d+/g)) {
-      setError((prev) =>
-        prev.filter((d) => d === 'The seconds needs to be between 0 and 59')
-      );
-      setSeconds(value);
-    }
-  };
-
-  const handleTitude = () => {
-    if (
-      deg.match(/[0-8]\d/g) &&
-      minutes.match(/[0-8]\d/g) &&
-      seconds.match(/[0-5]\d\.\d+/g)
-    ) {
-      setTitude(`${deg} -  ${minutes} ${seconds}`);
+    if (showSimple) {
+      console.log(simpleLocation);
+      handleTitude(simpleLocation);
     } else {
-      setTitude('');
+      const titude = deg + minutes / 60 + seconds / 3600;
+      handleTitude(titude);
+    }
+  }, [deg, minutes, seconds, showSimple, simpleLocation]);
+
+  useEffect(() => {
+    const container = document.getElementsByClassName(
+      'location-input__container'
+    )[0];
+    container && multipleInputsInOne(container);
+  });
+
+  const handleChangeDeg = (e) => {
+    const num = e.target.value;
+    if (!num || num.match(/^[0-8]?[0-9]$|^90$/gm)) {
+      setDeg(() => num);
     }
   };
+  const handleChangeMinutes = (e) => {
+    const num = e.target.value;
+    if (!num || num.match(/^[0-5]?[0-9]$/gm)) {
+      setMinutes(() => num);
+    }
+  };
+  const handleChangeSeconds = (e) => {
+    const num = e.target.value;
+    if (!num || num.match(/(?:^[0-5]?[0-9])(?:\.\d{0,4})?$/gm)) {
+      setSeconds(() => num);
+    }
+  };
+
+  const handleSimpleLocation = (e) => {
+    const num = e.target.value;
+    if (!num || num.match(/(?:^[0-8]?[0-9])(?:\.\d{0,8})?$|^90$/gm)) {
+      setSimpleLocation(() => num);
+    }
+  };
+
   return (
-    <div id='container'>
-      {/* <label htmlFor='longtitude'>Longtitude</label> */}
-      <input
-        type='text'
-        name='deg'
-        id='deg'
-        className='deg'
-        maxLength={2}
-        onChange={(e) => {
-          setDeg(e.target.value);
-          handleTitude();
-        }}
-        value={deg}
-        onBlur={onDegBlur}
-      />
-      {/* <label htmlFor='latitude'>Latitude</label> */}
-      <input
-        type='text'
-        name='minutes'
-        id='minutes'
-        maxLength={2}
-        pattern='[0-5]\d'
-        onBlur={onMinutesBlur}
-        value={minutes}
-        onChange={(e) => {
-          setMinutes(e.target.value);
-          handleTitude();
-        }}
-      />
-      <input
-        type='text'
-        name='seconds'
-        id='seconds'
-        maxLength={7}
-        onBlur={onSecondsBlur}
-        value={seconds}
-        onChange={(e) => {
-          setSeconds(e.target.value);
-          handleTitude();
-        }}
-      />
+    <div className='location-input'>
+      {!showSimple ? (
+        <div className='location-input__container'>
+          <input
+            type='text'
+            name='deg'
+            id='deg'
+            className='deg'
+            maxLength={2}
+            value={deg}
+            onChange={(e) => {
+              handleChangeDeg(e);
+            }}
+          />
+          <span>°</span>
+          <input
+            type='text'
+            name='minutes'
+            id='minutes'
+            maxLength={2}
+            value={minutes}
+            onChange={(e) => {
+              handleChangeMinutes(e);
+            }}
+          />
+          <span>'</span>
+          <input
+            type='text'
+            name='seconds'
+            id='seconds'
+            maxLength={6}
+            value={seconds}
+            onChange={(e) => {
+              handleChangeSeconds(e);
+            }}
+          />
+          <span>"</span>
+        </div>
+      ) : (
+        <input
+          type='text'
+          className='location-simple'
+          value={simpleLocation}
+          onChange={handleSimpleLocation}
+        />
+      )}
+
       {error && (
         <div className='error'>
           <p>Error</p>

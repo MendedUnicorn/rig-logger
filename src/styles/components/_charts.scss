@@ -1,0 +1,38 @@
+#bar-chart {
+  svg {
+    // border: 1px solid black;
+    box-shadow: $shadow-default;
+    margin: $m-size;
+  }
+}
+.bar {
+  fill: rgb(155, 225, 243);
+}
+
+.tooltip-barchart {
+  background: white;
+  box-shadow: $shadow-default;
+  padding: $xs-size;
+  border-radius: 5px;
+  font-size: x-small;
+}
+.world-map {
+  // position: relative;
+  height: 500px;
+  svg {
+    background-color: rgb(130, 179, 219);
+  }
+
+  path {
+    stroke-width: 0.01px;
+    stroke: white;
+    fill: rgba(241, 224, 164, 0.63);
+  }
+}
+.tooltip-map {
+  background: white;
+  box-shadow: $shadow-default;
+  padding: $xs-size;
+  border-radius: 5px;
+  font-size: x-small;
+}

@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import {
-  selectBetweenDates,
   selectCreateDataset,
-  selectNumberOfTrips,
   selectTopBottomColleague,
   selectTopBottomXofY,
   selectTotalAmountOfTrips,
 } from '../selectors/tripSelectors';
-import { selectTripsWithDays } from '../selectors/tripSelectors';
-import TripCard from './TripCard';
+
 import Ranked from './statistics/Ranked';
-import GraphD3 from './statistics/GraphD3';
+import { format } from 'date-fns';
 import { DateTime } from 'luxon';
-import { processCSV } from '../helpers/importFromMinDawinci';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../firebase/firebaseConfig';
-import { dispatch } from 'd3';
-import { startAddTrip } from '../slices/tripsSlice';
 import ImportFromDawinci from './ImportFromDawinci';
+import BarChart from './statistics/BarChart';
+import ReactDatePicker from 'react-datepicker';
+import MapChart from './statistics/MapChart';
 
 const OverviewPage = () => {
-  const data = useSelector((state) => state.trips);
+  // const data = useSelector((state) => state.trips);
+  const [startDate, setStartDate] = useState(
+    DateTime.now().startOf('year').toFormat('yyyy-LL-dd')
+  );
+  const [endDate, setEndDate] = useState(DateTime.now().toFormat('yyyy-LL-dd'));
+
+  const data = useSelector(selectCreateDataset(startDate, endDate));
 
   // finds data with more than x days offshore -use selectors like this for filters
   // const dataFiltered = useSelector(
@@ -37,17 +38,50 @@ const OverviewPage = () => {
   const top = useSelector(selectTopBottomColleague(3));
   const topRig = useSelector(selectTopBottomXofY('de', 3));
 
+  const handleStartDateChange = (e) => {
+    setStartDate(e ? format(e, 'yyyy-MM-dd') : '');
+  };
+  const handleEndDateChange = (e) => {
+    setEndDate(e ? format(e, 'yyyy-MM-dd') : '');
+  };
+
   return (
     <div className='overview'>
       <h2>Overview</h2>
       <p>Stats</p>
+      <ReactDatePicker
+        selected={startDate ? DateTime.fromISO(startDate).toJSDate() : null}
+        onChange={handleStartDateChange}
+        startDate={DateTime.fromISO(startDate).toJSDate()}
+        showIcon
+        isClearable
+        placeholderText='Select dates'
+        dateFormat={'MMM d, yyyy'}
+        className='calendar-picker'
+        showYearDropdown
+        dropdownMode='select'
+      />
+      <label htmlFor=''>To</label>
+      <ReactDatePicker
+        selected={endDate ? DateTime.fromISO(endDate).toJSDate() : ''}
+        onChange={handleEndDateChange}
+        startDate={DateTime.fromISO(endDate).toJSDate()}
+        showIcon
+        isClearable
+        placeholderText='Select dates'
+        dateFormat={'MMM d, yyyy'}
+        className='calendar-picker'
+        showYearDropdown
+        dropdownMode='select'
+      />
 
       {data && (
         <div>
           <p>Total trips {numberOfTrips}</p>
         </div>
       )}
-      <GraphD3></GraphD3>
+      {data && <BarChart data={data} />}
+      <MapChart />
       <div className='overview-container'>
         <Ranked number={5} category={'rig'} />
         <Ranked number={5} category={'colleagues'} />

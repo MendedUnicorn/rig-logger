@@ -6,6 +6,7 @@ import {
   getDocs,
   doc,
   updateDoc,
+  setDoc,
 } from 'firebase/firestore';
 
 import { db } from '../firebase/firebaseConfig';
@@ -54,7 +55,7 @@ export const startRemoveTrip = (id) => async (dispatch) => {
 
 export const startUpdateTrip = (id, update) => async (dispatch) => {
   console.log('id', id);
-  await updateDoc(doc(db, 'trips', id), update);
+  await setDoc(doc(db, 'trips', id), update, { merge: true });
   dispatch(
     tripsSlice.actions.updateTrip({ id, update: { ...update, id: id } })
   );

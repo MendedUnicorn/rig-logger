@@ -7,10 +7,18 @@ import useInputFieldComponent from './useInputFieldComponent';
 import { DateTime } from 'luxon';
 import DatePickerInput from './DatePicker';
 import LocationInput from './LocationInput';
+import ToggleSwitch from './ToggleSwitch';
 
 const TripForm = (props) => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState([]);
+  const [latitude, setLatitude] = useState(
+    props.trip?.location ? props.trip.location.lat : 0
+  );
+  const [longitude, setLongitude] = useState(
+    props.trip?.location ? props.trip.location.long : 0
+  );
+  const [toggleLocation, setToggleLocation] = useState(false);
 
   const [RigInput, rig, setRig] = useInputFieldComponent(
     'rigs',
@@ -42,7 +50,7 @@ const TripForm = (props) => {
   );
 
   const [workedAs, setWorkedAs] = useState(
-    props.trip ? props.trip.workedAs : []
+    props.trip?.workedAs ? props.trip.workedAs : []
   );
   const [dateFrom, setDateFrom] = useState(
     props.trip ? DateTime.fromISO(props.trip.dateFrom).toJSDate() : ''
@@ -51,10 +59,13 @@ const TripForm = (props) => {
     props.trip ? DateTime.fromISO(props.trip.dateTo).toJSDate() : ''
   );
   const [colleaguesArray, setColleaguesArray] = useState(
-    props.trip ? props.trip.colleagues : []
+    props.trip?.colleagues ? props.trip.colleagues : []
   );
-  const [runs, setRuns] = useState(props.trip ? props.trip.runs : []);
-  const [notes, setNotes] = useState(props.trip ? props.trip.notes : '');
+  const [runs, setRuns] = useState(props.trip?.runs ? props.trip.runs : []);
+  const [notes, setNotes] = useState(props.trip?.notes ? props.trip.notes : '');
+  const [heliport, setHeliport] = useState(
+    props.trip?.heliport ? props.trip.heliport : ''
+  );
 
   const dispatch = useDispatch();
 
@@ -106,7 +117,12 @@ const TripForm = (props) => {
     e.preventDefault();
     setRuns((prev) => prev.filter((run) => run.run !== runNr));
   };
-
+  const handleLatitude = (titude) => {
+    setLatitude(+titude);
+  };
+  const handleLongitude = (titude) => {
+    setLongitude(+titude);
+  };
   const handleSubmitTrip = (e) => {
     e.preventDefault();
     const dataToSubmit = {
@@ -121,9 +137,14 @@ const TripForm = (props) => {
       colleagues: colleaguesArray,
       runs,
       notes,
+      location: { lat: latitude, long: longitude },
     };
     if (props.trip) {
-      dispatch(startUpdateTrip(props.trip.id, dataToSubmit));
+      console.log('some', { ...dataToSubmit });
+      console.log('all', { ...props.trip, ...dataToSubmit });
+      dispatch(
+        startUpdateTrip(props.trip.id, { ...props.trip, ...dataToSubmit })
+      );
     } else {
       // add record
       dispatch(startAddTrip(dataToSubmit));
@@ -279,7 +300,17 @@ const TripForm = (props) => {
           })}
       </div>
       <div className='form__input-group'>
-        <LocationInput />
+        <ToggleSwitch handleChecked={(e) => setToggleLocation((prev) => e)} />
+        <LocationInput
+          handleTitude={handleLatitude}
+          showSimple={toggleLocation}
+          defaultValue={latitude}
+        />
+        <LocationInput
+          handleTitude={handleLongitude}
+          showSimple={toggleLocation}
+          defaultValue={longitude}
+        />
       </div>
       <div className='form__input-group'>
         <label htmlFor='notes'></label>
@@ -294,7 +325,13 @@ const TripForm = (props) => {
       </div>
       <div className='form__input-group'>
         <label htmlFor=''>Heliport</label>
-        <input type='text' name='' id='' />
+        <input
+          type='text'
+          name=''
+          id=''
+          value={heliport}
+          onChange={(e) => setHeliport(e.target.value)}
+        />
       </div>
 
       <button className='button submit'>

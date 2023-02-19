@@ -20,14 +20,6 @@ export const selectTripsSortedBy =
   (state) => {
     return [...state.trips]
       .filter((trip) => {
-        console.log(
-          'compare',
-          DateTime.fromISO(startDate),
-          'startdata',
-          startDate,
-          'tripdate:',
-          trip.dateFrom
-        );
         const startDateMatch = startDate
           ? DateTime.fromISO(startDate) < DateTime.fromISO(trip.dateFrom)
           : true;

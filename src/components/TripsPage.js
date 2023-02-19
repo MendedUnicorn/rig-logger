@@ -34,16 +34,16 @@ const TripsPage = () => {
     dispatch(setTextFilter(e.target.value));
   };
   const handleStartDateChange = (e) => {
-    dispatch(setStartDate(format(e, 'yyyy-MM-dd')));
+    dispatch(setStartDate(e ? format(e, 'yyyy-MM-dd') : ''));
   };
   const handleEndDateChange = (e) => {
-    dispatch(setEndDate(format(e, 'yyyy-MM-dd')));
+    dispatch(setEndDate(e ? format(e, 'yyyy-MM-dd') : ''));
   };
 
   return (
     <div className=''>
       <h2>All trips</h2>
-      <p>See all your trips here</p>
+      <p>Showing {data.length} trips</p>
       <select name='' id='' onChange={handleChange}>
         <option value='date'>Date</option>
         <option value='length'>Length</option>
@@ -53,7 +53,7 @@ const TripsPage = () => {
       <input type='text' name='' id='' onChange={handleTextSearchChange} />
       <label htmlFor=''>From</label>
       <ReactDatePicker
-        selected={DateTime.fromISO(startDate).toJSDate()}
+        selected={startDate ? DateTime.fromISO(startDate).toJSDate() : null}
         onChange={handleStartDateChange}
         startDate={DateTime.fromISO(startDate).toJSDate()}
         showIcon
@@ -66,7 +66,7 @@ const TripsPage = () => {
       />
       <label htmlFor=''>To</label>
       <ReactDatePicker
-        selected={DateTime.fromISO(endDate).toJSDate()}
+        selected={endDate ? DateTime.fromISO(endDate).toJSDate() : ''}
         onChange={handleEndDateChange}
         startDate={DateTime.fromISO(endDate).toJSDate()}
         showIcon
@@ -75,6 +75,7 @@ const TripsPage = () => {
         dateFormat={'MMM d, yyyy'}
         className='calendar-picker'
         showYearDropdown
+        dropdownMode='select'
       />
       {data &&
         data.map((trip, i) => {
