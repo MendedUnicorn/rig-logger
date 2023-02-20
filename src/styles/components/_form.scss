@@ -132,8 +132,8 @@
 
 .react-datepicker__month-container {
   background-color: rgb(245, 232, 220);
-  width: 30em;
-  height: 30em;
+  width: 35em;
+  height: 35em;
 }
 .react-datepicker__header {
   background-color: rgb(252, 250, 249);
@@ -147,4 +147,13 @@
   font-size: 2em;
   padding: 0.3em;
   width: 1.8em;
+}
+
+.react-datepicker__input-container {
+  display: flex;
+  width: fit-content;
+  justify-content: start;
+}
+
+.react-datepicker-popper {
 }

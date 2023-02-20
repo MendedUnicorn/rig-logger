@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Cleave from 'cleave.js/react';
 import { multipleInputsInOne } from '../helpers/multipleInputsInOne';
-const LocationInput = ({ handleTitude, showSimple, defaultValue }) => {
-  const [deg, setDeg] = useState(defaultValue ? Math.floor(defaultValue) : 0);
+const LocationInput = ({ handleTitude, showSimple, defaultValue, type }) => {
+  const [deg, setDeg] = useState(defaultValue ? Math.floor(defaultValue) : '');
   const [minutes, setMinutes] = useState(
-    defaultValue ? Math.floor((defaultValue % 1) * 60) : 0
+    defaultValue ? Math.floor((defaultValue % 1) * 60) : ''
   );
   const [seconds, setSeconds] = useState(
-    defaultValue ? ((((defaultValue % 1) * 60) % 1) * 60).toFixed(4) : 0
+    defaultValue ? ((((defaultValue % 1) * 60) % 1) * 60).toFixed(4) : ''
   );
   const [simpleLocation, setSimpleLocation] = useState(
-    defaultValue ? defaultValue : 0
+    defaultValue ? defaultValue : ''
   );
+
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -19,14 +20,14 @@ const LocationInput = ({ handleTitude, showSimple, defaultValue }) => {
       console.log(simpleLocation);
       handleTitude(simpleLocation);
     } else {
-      const titude = deg + minutes / 60 + seconds / 3600;
+      const titude = +deg + +minutes / 60 + +seconds / 3600;
       handleTitude(titude);
     }
   }, [deg, minutes, seconds, showSimple, simpleLocation]);
 
   useEffect(() => {
     const container = document.getElementsByClassName(
-      'location-input__container'
+      `location-input__container-${type}`
     )[0];
     container && multipleInputsInOne(container);
   });
@@ -60,7 +61,7 @@ const LocationInput = ({ handleTitude, showSimple, defaultValue }) => {
   return (
     <div className='location-input'>
       {!showSimple ? (
-        <div className='location-input__container'>
+        <div className={`location-input__container-${type}`}>
           <input
             type='text'
             name='deg'

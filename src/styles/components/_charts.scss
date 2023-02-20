@@ -17,8 +17,12 @@
   font-size: x-small;
 }
 .world-map {
-  // position: relative;
+  position: relative;
   height: 500px;
+  width: fit-content;
+  margin: $m-size;
+  box-shadow: $shadow-default;
+
   svg {
     background-color: rgb(130, 179, 219);
   }
@@ -35,4 +39,5 @@
   padding: $xs-size;
   border-radius: 5px;
   font-size: x-small;
+  position: absolute;
 }

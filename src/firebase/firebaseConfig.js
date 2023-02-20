@@ -8,6 +8,7 @@ import {
 } from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
+import { backup } from '../data/backup-2022-2-20';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -35,5 +36,9 @@ const addOptions = async (options, database) => {
   const docRef = await addDoc(collection(db, database), options);
   console.log('option added: ', docRef.id);
 };
+
+// added back all rigs after accidental deletion
+// const nodupes = [...new Set(backup.trips.map((trip) => trip.rig))];
+// nodupes.forEach((rig) => addOptions({ name: rig }, 'rigs'));
 
 export { app, db, addNewTrip, addOptions };

@@ -13,10 +13,10 @@ const TripForm = (props) => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState([]);
   const [latitude, setLatitude] = useState(
-    props.trip?.location ? props.trip.location.lat : 0
+    props.trip?.location ? props.trip.location.lat : ''
   );
   const [longitude, setLongitude] = useState(
-    props.trip?.location ? props.trip.location.long : 0
+    props.trip?.location ? props.trip.location.long : ''
   );
   const [toggleLocation, setToggleLocation] = useState(false);
 
@@ -53,10 +53,10 @@ const TripForm = (props) => {
     props.trip?.workedAs ? props.trip.workedAs : []
   );
   const [dateFrom, setDateFrom] = useState(
-    props.trip ? DateTime.fromISO(props.trip.dateFrom).toJSDate() : ''
+    props.trip?.dateFrom ? DateTime.fromISO(props.trip.dateFrom).toJSDate() : ''
   );
   const [dateTo, setDateTo] = useState(
-    props.trip ? DateTime.fromISO(props.trip.dateTo).toJSDate() : ''
+    props.trip?.dateTo ? DateTime.fromISO(props.trip.dateTo).toJSDate() : ''
   );
   const [colleaguesArray, setColleaguesArray] = useState(
     props.trip?.colleagues ? props.trip.colleagues : []
@@ -137,7 +137,10 @@ const TripForm = (props) => {
       colleagues: colleaguesArray,
       runs,
       notes,
-      location: { lat: latitude, long: longitude },
+      location: {
+        lat: latitude ? latitude.toString() : '',
+        long: longitude ? longitude.toString() : '',
+      },
     };
     if (props.trip) {
       console.log('some', { ...dataToSubmit });
@@ -215,9 +218,11 @@ const TripForm = (props) => {
       <div className='form__input-group'>
         <DatePickerInput
           handleSetStartDate={handleSetStartDate}
-          startDate={props.trip ? new Date(props.trip.dateFrom) : dateFrom}
+          startDate={
+            props.trip?.dateFrom ? new Date(props.trip.dateFrom) : dateFrom
+          }
           handleSetEndDate={handleSetEndDate}
-          endDate={props.tri ? new Date(props.trip.dateTo) : dateTo}
+          endDate={props.trip?.dateTo ? new Date(props.trip.dateTo) : dateTo}
         />
         {/* <label htmlFor='dateFrom'>From</label>
         <input
@@ -305,11 +310,13 @@ const TripForm = (props) => {
           handleTitude={handleLatitude}
           showSimple={toggleLocation}
           defaultValue={latitude}
+          type='latitude'
         />
         <LocationInput
           handleTitude={handleLongitude}
           showSimple={toggleLocation}
           defaultValue={longitude}
+          type='longitude'
         />
       </div>
       <div className='form__input-group'>

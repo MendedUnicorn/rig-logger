@@ -1,164 +1,192 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import * as d3 from 'd3';
 import worldData from '../../data/countries.geojson';
 import norwayCities from '../../data/norwayCities.json';
 import { useSelector } from 'react-redux';
 import { DateTime } from 'luxon';
+import { useD3 } from '../../hooks/useD3';
+import useLoadMapData from '../../hooks/useLoadMapData';
 
 const MapChart = () => {
   const margin = { top: '10', right: '30', bottom: '50', left: '70' };
   const width = document.querySelector('body').clientWidth / 2;
   const height = 500;
   const dbData = useSelector((state) => state.trips);
+  const url = new URL('../../data/norwayCities.json', import.meta.url);
 
-  //   const worldData = require('../../data/countries.geojson');
-  //   const norwayCities = require('../../data/norwayCities.json');
+  const [data, loading] = useLoadMapData();
 
-  useEffect(() => {
-    const projection = d3
-      .geoMercator()
-      //   .rotate([-11, 0])
-      .scale(6000)
-      .translate([-1500, -400]);
+  const ref = useCallback(
+    useD3(
+      (svg) => {
+        const g = svg.select('.map-group');
 
-    const pathGenerator = d3.geoPath().projection(projection);
-    console.log(dbData);
-    const svg = d3
-      .select('.world-map')
-      .append('svg')
-      .attr('viewbox', [0, 0, width, height])
-      //   .attr('preserveAspectRatio', 'xMidyMid')
-      .style('max-width', 1200)
-      .style('margin', 'auto')
-      .style('display', 'flex')
-      .attr('height', height)
-      .attr('width', width);
+        const projection = d3.geoMercator();
+        // .rotate([-11, 0])
+        // .scale(6000)
+        // .translate([-1500, -400]);
 
-    const g = svg.append('g');
+        const pathGenerator = d3.geoPath().projection(projection);
 
-    const tooltip = d3
-      .select('.world-map')
-      .append('div')
-      .attr('class', 'tooltip-map')
-      .style('opacity', 0)
-      .style('position', 'absolute');
+        const tooltip = d3
+          .select('.tooltip-map')
+          .style('opacity', 0)
+          .style('position', 'absolute');
 
-    const url = new URL('../../data/norwayCities.json', import.meta.url);
+        if (data) {
+          data[1].forEach((d) => {
+            d.lat = +d.lat;
+            d.lng = +d.lng;
+          });
 
-    Promise.all([
-      d3.json(worldData),
-      d3.json(url),
-      d3.json(
-        'https://raw.githubusercontent.com/iamspruce/intro-d3/main/data/nigeria-states.json'
-      ),
-    ]).then(([geoJSONdata, citiesData, third]) => {
-      third.forEach((d) => {
-        d.info.Latitude = +d.info.Latitude;
-        d.info.Longitude = +d.info.Longitude;
-      });
-      citiesData.forEach((d) => {
-        d.lat = +d.lat;
-        d.lng = +d.lng;
-      });
+          const rigData = dbData
+            .filter((d) => {
+              return d.location?.lat && d?.location?.long;
+            })
+            .map((d) => ({
+              rig: d.rig,
+              lat: d.location.lat,
+              long: d.location.long,
+              date: DateTime.fromISO(d.dateFrom).toFormat('LLL yyyy'),
+            }));
 
-      const rigData = dbData
-        .filter((d) => {
-          return d.location;
-        })
-        .map((d) => ({
-          rig: d.rig,
-          lat: +d.location.lat,
-          long: +d.location.long,
-          date: DateTime.fromISO(d.dateFrom).toFormat('LLL yyyy'),
-        }));
-      console.log('rigdata', rigData);
+          projection.fitSize([width, height], data[0]);
 
-      projection.fitSize([width, height], geoJSONdata);
+          svg
+            .select('.map-area')
+            .attr('fill', 'steelblue')
+            .selectAll('path')
+            .data(data[0].features)
+            .join('path')
+            .attr('d', pathGenerator);
 
-      g.selectAll('path')
-        .data(geoJSONdata.features)
-        .join('path')
-        .attr('d', pathGenerator);
+          //   svg
+          //     .select('.map-area')
+          //     .attr('fill', 'blue')
+          //     .selectAll('path')
 
-      g.selectAll('text')
-        .data(citiesData)
-        .join('text')
-        .attr('x', (d) => projection([d.lng, d.lat])[0])
-        .attr('y', (d) => projection([d.lng, d.lat])[1])
-        .attr('dy', -7)
-        .style('font-size', '0px')
-        .attr('text-anchor', 'middle')
-        .text((d) => d.city)
-        .style('fill', 'black');
+          //     .attr('class', 'tets')
+          //     .data(data[2].features)
+          //     .join('path')
+          //     .attr('d', pathGenerator);
 
-      g.selectAll('circle')
-        .data(rigData)
-        .join('circle')
-        .attr('cx', (d) => projection([d.long, d.lat])[0])
-        .attr('cy', (d) => projection([d.long, d.lat])[1])
-        .attr('r', 5)
-        .style('fill', 'black')
-        .on('mouseover', function (e, d) {
-          console.log(e);
-          tooltip
-            .transition()
-            .duration(100)
-            .style('display', 'inline')
-            .style('opacity', 1);
-          tooltip
-            .html(`<p>${d.rig}</p> <p>${d.date} </p>`)
-            .style('left', e.pageX + 20 + 'px')
-            .style('top', e.pageY - 50 + 'px');
-        })
-        .on('mouseout', function (e, d) {
-          tooltip.transition().duration(200).style('display', 'none');
-        });
+          svg
+            .select('.map-area')
+            .selectAll('text')
+            .data(data[1])
+            .join('text')
+            .attr('x', (d) => projection([d.lng, d.lat])[0])
+            .attr('y', (d) => projection([d.lng, d.lat])[1])
+            .attr('dy', -7)
+            .style('font-size', '1px')
+            .attr('text-anchor', 'middle')
+            .text((d) => d.city)
+            .style('fill', 'black');
 
-      console.log(dbData);
-    });
-
-    const zooming = d3
-      .zoom()
-      .scaleExtent([0, 1000]) // the limit of the zoom to prevent it zooming forever
-      .extent([
-        [0, 0],
-        [width, height],
-      ])
-      .on('zoom', (e) => {
-        // console.log(e);
-        g.selectAll('path').attr('transform', e.transform);
-        //   .style('stroke-width', 0.5 / e.transform.k + 'px');
-
-        g.selectAll('text')
-          .attr('transform', e.transform)
-          .style('font-size', '0px')
-          .attr('dy', -7 / e.transform.k)
-          .attr('class', 'city-names');
-
-        g.selectAll('circle')
-          .attr('transform', e.transform)
-          .attr('r', 7 / e.transform.k);
-
-        let scale = d3
-          .select('.city-names')
-          .attr('transform')
-          .match(/(?:scale)\((\d*.\d*)/)[1];
-
-        if (scale < 150) {
-          g.selectAll('text').style('font-size', '0px');
+          svg
+            .select('g')
+            .selectAll('circle')
+            .data(rigData)
+            .join('circle')
+            .attr('cx', (d) => projection([d.long, d.lat])[0])
+            .attr('cy', (d) => projection([d.long, d.lat])[1])
+            .attr('r', 1)
+            .style('fill', 'black')
+            .on('mouseover', function (e, d) {
+              console.log(e);
+              tooltip
+                .transition()
+                .duration(100)
+                //   .style('display', 'inline')
+                .style('opacity', 1);
+              tooltip
+                .html(`<p>${d.rig}</p> <p>${d.date} </p>`)
+                .style('left', e.layerX + 20 + 'px')
+                .style('top', e.layerY - 50 + 'px');
+            })
+            .on('mouseout', function (e, d) {
+              tooltip.transition().duration(200).style('opacity', 0);
+            });
         } else {
-          g.selectAll('text').style('font-size', `${18 / e.transform.k}px`);
+          console.log(loading);
         }
-      });
+        const zooming = d3
+          .zoom()
+          .scaleExtent([0, 1000]) // the limit of the zoom to prevent it zooming forever
+          .extent([
+            [0, 0],
+            [width, height],
+          ])
+          .on('zoom', (e) => {
+            svg.select('g').selectAll('path').attr('transform', e.transform);
+            svg
+              .select('g')
+              .selectAll('text')
+              .attr('transform', e.transform)
+              .style('font-size', '0.11px')
+              .attr('dy', -7 / e.transform.k)
+              .attr('class', 'city-names');
+            svg
+              .select('g')
+              .selectAll('circle')
+              .attr('transform', e.transform)
+              .attr('r', 5 / e.transform.k);
+            // make names show up at certain zoom level
+            //   let scale = d3
+            //     .select('.city-names')
+            //     .attr('transform')
+            //     .match(/(?:scale)\((\d*.\d*)/)[1];
+            //   if (scale < 150) {
+            //     g.selectAll('text').style('font-size', '0px');
+            //   } else {
+            //     g.selectAll('text').style('font-size', `${18 / e.transform.k}px`);
+            //   }
+          });
 
-    svg.call(zooming);
+        svg.call(zooming);
+        svg.call(
+          zooming.transform,
+          d3.zoomIdentity.translate(-2000, -541).scale(6.96)
+        );
 
-    return () => {
-      svg.remove();
-    };
-  }, []);
+        // svg.select('g').call(world);
 
-  return <div className='world-map'></div>;
+        //   svg.select('g').call(rigMarkers);
+      },
+      [url]
+    ),
+    [url]
+  );
+
+  //   useEffect(() => {
+
+  //     return () => {
+  //       svg.remove();
+  //     };
+  //   }, []
+
+  //   const test = () => {
+  //     console.log('clicked');
+  //     svg.call(
+  //       zooming.transform,
+  //       d3.zoomIdentity.translate(-1799, -529).scale(6.96)
+  //     );
+  //   };
+
+  return (
+    <div className='world-map'>
+      <svg
+        ref={ref}
+        viewBox={`0 0 ${width} ${height}`}
+        height={height}
+        width={width}
+        style={{ maxWidth: '1200px', margin: 'auto', display: 'flex' }}
+      >
+        <g className='map-area' height={height} width={width}></g>
+      </svg>
+      <div className='tooltip-map'></div>
+    </div>
+  );
 };
 
 export default MapChart;

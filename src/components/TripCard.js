@@ -29,7 +29,7 @@ const TripCard = ({ trip }) => {
   };
 
   return (
-    <div className='card'>
+    <div className='card' onClick={(e) => console.log(trip)}>
       <div className='card__container'>
         <div className='card__container__info'>
           <h2>{trip.rig}</h2>

@@ -4,8 +4,8 @@ import { DateTime } from 'luxon';
 const initialState = {
   text: '',
   sortBy: 'date',
-  startDate: DateTime.now().startOf('month').toISO(),
-  endDate: DateTime.now().endOf('month').toISO(),
+  startDate: '', // DateTime.now().startOf('month').toISO(),
+  endDate: '', // DateTime.now().endOf('month').toISO(),
 };
 
 export const filtersSlice = createSlice({

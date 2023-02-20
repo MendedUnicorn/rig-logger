@@ -1,4 +1,5 @@
-.location-input__container {
+.location-input__container-longitude,
+.location-input__container-latitude {
   box-shadow: $shadow-default;
   border-radius: 5px;
   width: fit-content;

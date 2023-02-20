@@ -36,7 +36,6 @@
 
 export const multipleInputsInOne = (container) => {
   const inputs = container.querySelectorAll('input');
-  console.log(inputs);
   inputs.forEach((input, i) => {
     input.addEventListener('keyup', (e) => {
       console.log(e);
