@@ -19,6 +19,10 @@ const AddNewOption = ({ type }) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+
+
+
+
       <button onClick={handleAdd}>+</button>
     </div>
   );

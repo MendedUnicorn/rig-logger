@@ -1,70 +1,70 @@
-import React, { useState } from 'react';
-import SectionInput from './SectionInput';
-import { useDispatch, useSelector } from 'react-redux';
-import { startAddTrip, startUpdateTrip } from '../slices/tripsSlice';
-import { redirect, useNavigate } from 'react-router-dom';
-import useInputFieldComponent from './useInputFieldComponent';
-import { DateTime } from 'luxon';
-import DatePickerInput from './DatePicker';
-import LocationInput from './LocationInput';
-import ToggleSwitch from './ToggleSwitch';
+import React, { useState } from "react";
+import SectionInput from "./SectionInput";
+import { useDispatch, useSelector } from "react-redux";
+import { startAddTrip, startUpdateTrip } from "../slices/tripsSlice";
+import { redirect, useNavigate } from "react-router-dom";
+import useInputFieldComponent from "./useInputFieldComponent";
+import { DateTime } from "luxon";
+import DatePickerInput from "./DatePicker";
+import LocationInput from "./LocationInput";
+import ToggleSwitch from "./ToggleSwitch";
 
 const TripForm = (props) => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState([]);
   const [latitude, setLatitude] = useState(
-    props.trip?.location ? props.trip.location.lat : ''
+    props.trip?.location ? props.trip.location.lat : ""
   );
   const [longitude, setLongitude] = useState(
-    props.trip?.location ? props.trip.location.long : ''
+    props.trip?.location ? props.trip.location.long : ""
   );
   const [toggleLocation, setToggleLocation] = useState(false);
 
   const [RigInput, rig, setRig] = useInputFieldComponent(
-    'rigs',
+    "rigs",
     props.trip ? props.trip.rig : null
   );
   const [OperatorInput, operator, setOperator] = useInputFieldComponent(
-    'operators',
-    props.trip ? props.trip.operator : ''
+    "operators",
+    props.trip ? props.trip.operator : ""
   );
   const [ContractorInput, contractor, setContractor] = useInputFieldComponent(
-    'contractors',
-    props.trip ? props.trip.contractor : ''
+    "contractors",
+    props.trip ? props.trip.contractor : ""
   );
   const [FsmInput, fsm, setFsm] = useInputFieldComponent(
-    'fsms',
-    props.trip ? props.trip.fsm : ''
+    "fsms",
+    props.trip ? props.trip.fsm : ""
   );
   const [DeInput, de, setDe] = useInputFieldComponent(
-    'des',
-    props.trip ? props.trip.de : ''
+    "des",
+    props.trip ? props.trip.de : ""
   );
   const [ColleagueInput, colleague, setColleague] = useInputFieldComponent(
-    'colleagues',
-    props.trip ? props.trip.colleague : ''
+    "colleagues",
+    props.trip ? props.trip.colleague : ""
   );
   const [PositionInput, position, setPosition] = useInputFieldComponent(
-    'positions',
-    props.trip ? props.trip.position : ''
+    "positions",
+    props.trip ? props.trip.position : ""
   );
 
   const [workedAs, setWorkedAs] = useState(
     props.trip?.workedAs ? props.trip.workedAs : []
   );
   const [dateFrom, setDateFrom] = useState(
-    props.trip?.dateFrom ? DateTime.fromISO(props.trip.dateFrom).toJSDate() : ''
+    props.trip?.dateFrom ? DateTime.fromISO(props.trip.dateFrom).toJSDate() : ""
   );
   const [dateTo, setDateTo] = useState(
-    props.trip?.dateTo ? DateTime.fromISO(props.trip.dateTo).toJSDate() : ''
+    props.trip?.dateTo ? DateTime.fromISO(props.trip.dateTo).toJSDate() : ""
   );
   const [colleaguesArray, setColleaguesArray] = useState(
     props.trip?.colleagues ? props.trip.colleagues : []
   );
   const [runs, setRuns] = useState(props.trip?.runs ? props.trip.runs : []);
-  const [notes, setNotes] = useState(props.trip?.notes ? props.trip.notes : '');
+  const [notes, setNotes] = useState(props.trip?.notes ? props.trip.notes : "");
   const [heliport, setHeliport] = useState(
-    props.trip?.heliport ? props.trip.heliport : ''
+    props.trip?.heliport ? props.trip.heliport : ""
   );
 
   const dispatch = useDispatch();
@@ -74,7 +74,7 @@ const TripForm = (props) => {
   if (DateTime.fromISO(dateFrom) > DateTime.fromISO(dateTo)) {
     setErrors((prevState) => [
       ...prevState,
-      'Start date cannot be after end date.',
+      "Start date cannot be after end date.",
     ]);
   }
 
@@ -90,8 +90,8 @@ const TripForm = (props) => {
       ...prev,
       { name: colleague.value, position: position.value },
     ]);
-    setColleague('');
-    setPosition('');
+    setColleague("");
+    setPosition("");
   };
   const handleRemoveColleaguesArray = (e, name) => {
     e.preventDefault();
@@ -126,25 +126,25 @@ const TripForm = (props) => {
   const handleSubmitTrip = (e) => {
     e.preventDefault();
     const dataToSubmit = {
-      rig: rig ? rig.value : '',
-      operator: operator ? operator.value : '',
-      contractor: contractor ? contractor.value : '',
+      rig: rig ? rig.value : "",
+      operator: operator ? operator.value : "",
+      contractor: contractor ? contractor.value : "",
       workedAs,
-      dateFrom: dateFrom ? dateFrom.toISOString() : '',
-      dateTo: dateFrom ? dateTo.toISOString() : '',
-      fsm: fsm ? fsm.value : '',
-      de: de ? de.value : '',
+      dateFrom: dateFrom ? dateFrom.toISOString() : "",
+      dateTo: dateFrom ? dateTo.toISOString() : "",
+      fsm: fsm ? fsm.value : "",
+      de: de ? de.value : "",
       colleagues: colleaguesArray,
       runs,
       notes,
       location: {
-        lat: latitude ? latitude.toString() : '',
-        long: longitude ? longitude.toString() : '',
+        lat: latitude ? latitude.toString() : "",
+        long: longitude ? longitude.toString() : "",
       },
     };
     if (props.trip) {
-      console.log('some', { ...dataToSubmit });
-      console.log('all', { ...props.trip, ...dataToSubmit });
+      console.log("some", { ...dataToSubmit });
+      console.log("all", { ...props.trip, ...dataToSubmit });
       dispatch(
         startUpdateTrip(props.trip.id, { ...props.trip, ...dataToSubmit })
       );
@@ -152,70 +152,70 @@ const TripForm = (props) => {
       // add record
       dispatch(startAddTrip(dataToSubmit));
     }
-    redirect('/trips');
-    navigate('/trips');
+    redirect("/trips");
+    navigate("/trips");
   };
 
   return (
-    <form className='form' onSubmit={handleSubmitTrip}>
-      <div className='form__input-group'>
-        <label htmlFor='rig'>Rig</label>
+    <form className="form" onSubmit={handleSubmitTrip}>
+      <div className="form__input-group">
+        <label htmlFor="rig">Rig</label>
         <RigInput />
-        <label htmlFor='operator'>Operator</label>
+        <label htmlFor="operator">Operator</label>
         <OperatorInput />
 
-        <label htmlFor='contractor'>Contractor</label>
+        <label htmlFor="contractor">Contractor</label>
         <ContractorInput />
       </div>
 
-      <div className='form__input-group--checkbox'>
-        <div className='form__input-group__checkbox-group'>
-          <label htmlFor='workedAs'>MWD</label>
+      <div className="form__input-group--checkbox">
+        <div className="form__input-group__checkbox-group">
+          <label htmlFor="workedAs">MWD</label>
           <input
-            type='checkbox'
-            id='mwd'
-            value='mwd'
-            name='workedAs'
+            type="checkbox"
+            id="mwd"
+            value="mwd"
+            name="workedAs"
             onChange={handleCheckboxChange}
-            checked={workedAs ? workedAs.includes('mwd') : false}
+            checked={workedAs ? workedAs.includes("mwd") : false}
           />
         </div>
-        <div className='form__input-group__checkbox-group'>
-          <label htmlFor='workedAs'>DD</label>
+        <div className="form__input-group__checkbox-group">
+          <label htmlFor="workedAs">DD</label>
           <input
-            type='checkbox'
-            id='dd'
-            value='dd'
-            name='workedAs'
+            type="checkbox"
+            id="dd"
+            value="dd"
+            name="workedAs"
             onChange={handleCheckboxChange}
-            checked={workedAs ? workedAs.includes('dd') : false}
+            checked={workedAs ? workedAs.includes("dd") : false}
           />
         </div>
-        <div className='form__input-group__checkbox-group'>
-          <label htmlFor='workedAs'>JPG Engineer</label>
+        <div className="form__input-group__checkbox-group">
+          <label htmlFor="workedAs">JPG Engineer</label>
           <input
-            type='checkbox'
-            id='jpg'
-            value='jpg'
-            name='workedAs'
+            type="checkbox"
+            id="jpg"
+            value="jpg"
+            name="workedAs"
             onChange={handleCheckboxChange}
-            checked={workedAs ? workedAs.includes('jpg') : false}
+            checked={workedAs ? workedAs.includes("jpg") : false}
           />
         </div>
-        <div className='form__input-group__checkbox-group'>
-          <label htmlFor='workedAs'>Seismic Engineer</label>
+        <div className="form__input-group__checkbox-group">
+          <label htmlFor="workedAs">Seismic Engineer</label>
           <input
-            type='checkbox'
-            id='seismicengineer'
-            value='seismicengineer'
-            name='workedAs'
+            type="checkbox"
+            id="seismicengineer"
+            value="seismicengineer"
+            name="workedAs"
             onChange={handleCheckboxChange}
-            checked={workedAs ? workedAs.includes('seismicengineer') : false}
+            checked={workedAs ? workedAs.includes("seismicengineer") : false}
           />
         </div>
       </div>
 
-      <div className='form__input-group'>
+      <div className="form__input-group">
         <DatePickerInput
           handleSetStartDate={handleSetStartDate}
           startDate={
@@ -242,21 +242,21 @@ const TripForm = (props) => {
         /> */}
       </div>
 
-      <div className='form__input-group'>
-        <label htmlFor='fsm'>FSM</label>
+      <div className="form__input-group">
+        <label htmlFor="fsm">FSM</label>
         <FsmInput />
-        <label htmlFor='de'>DE</label>
+        <label htmlFor="de">DE</label>
         <DeInput />
       </div>
 
-      <div className='form__input-group'>
-        <label htmlFor='colleague'>Colleague</label>
-        <div className='form__input-group--one-line'>
+      <div className="form__input-group">
+        <label htmlFor="colleague">Colleague</label>
+        <div className="form__input-group--one-line">
           <ColleagueInput />
           <PositionInput />
           <button
-            className='button form__input-group--one-line__button'
-            type='button'
+            className="button form__input-group--one-line__button"
+            type="button"
             onClick={handleAddColleaguesArray}
             disabled={colleague ? false : true}
           >
@@ -264,12 +264,12 @@ const TripForm = (props) => {
           </button>
         </div>
       </div>
-      <div className='form__input-group'>
+      <div className="form__input-group">
         {colleaguesArray &&
           colleaguesArray.map((colleague) => {
             return (
               <p key={colleague.name} id={colleague.name}>
-                {colleague.name} - {colleague.position}{' '}
+                {colleague.name} - {colleague.position}{" "}
                 <button
                   onClick={(e) =>
                     handleRemoveColleaguesArray(e, colleague.name)
@@ -282,13 +282,13 @@ const TripForm = (props) => {
           })}
       </div>
 
-      <div className='form__input-group'>
+      <div className="form__input-group">
         <SectionInput
           handleAddRun={handleAddRun}
           handleRemoveRun={handleRemoveRun}
         />
       </div>
-      <div className='form__input-group'>
+      <div className="form__input-group">
         {runs &&
           runs.map((run, i) => {
             return (
@@ -304,45 +304,35 @@ const TripForm = (props) => {
             );
           })}
       </div>
-      <div className='form__input-group'>
+      <div className="form__input-group">
         <ToggleSwitch handleChecked={(e) => setToggleLocation((prev) => e)} />
         <LocationInput
           handleTitude={handleLatitude}
           showSimple={toggleLocation}
           defaultValue={latitude}
-          type='latitude'
+          type="latitude"
         />
         <LocationInput
           handleTitude={handleLongitude}
           showSimple={toggleLocation}
           defaultValue={longitude}
-          type='longitude'
+          type="longitude"
         />
       </div>
-      <div className='form__input-group'>
-        <label htmlFor='notes'></label>
+      <div className="form__input-group">
+        <label htmlFor="notes"></label>
         <textarea
-          name='notes'
-          id='notes'
-          cols='30'
-          rows='10'
+          name="notes"
+          id="notes"
+          cols="30"
+          rows="10"
           onChange={(e) => setNotes(e.target.value)}
           value={notes}
         ></textarea>
       </div>
-      <div className='form__input-group'>
-        <label htmlFor=''>Heliport</label>
-        <input
-          type='text'
-          name=''
-          id=''
-          value={heliport}
-          onChange={(e) => setHeliport(e.target.value)}
-        />
-      </div>
 
-      <button className='button submit'>
-        {props.trip ? 'Save' : 'Add Trip'}
+      <button className="button submit">
+        {props.trip ? "Save" : "Add Trip"}
       </button>
     </form>
   );
