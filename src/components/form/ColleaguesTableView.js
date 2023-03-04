@@ -48,11 +48,33 @@ function ColleaguesTableView(props) {
   ];
 
   return (
-    <DataGrid items={items} columns={columns}>
+    <DataGrid
+      items={items}
+      columns={columns}
+      resizableColumns
+      columnSizingOptions={{
+        colleague: {
+          minWidth: 100,
+          defaultWidth: "20%",
+          idealWidth: "20%",
+        },
+        position: {
+          defaultWidth: "65%",
+          minWidth: 60,
+          idealWidth: "65% ",
+        },
+
+        remove: {
+          minWidth: 40,
+          defaultWidth: "15%",
+          idealWidth: "15%",
+        },
+      }}
+    >
       <DataGridHeader>
         <DataGridRow>
           {({ renderHeaderCell }) => (
-            <DataGridHeaderCell>{renderHeaderCell}</DataGridHeaderCell>
+            <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>
           )}
         </DataGridRow>
       </DataGridHeader>

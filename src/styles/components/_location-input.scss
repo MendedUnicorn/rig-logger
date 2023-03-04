@@ -1,8 +1,16 @@
 .location-input__container-longitude,
 .location-input__container-latitude {
-  box-shadow: $shadow-default;
-  border-radius: 5px;
+  border-radius: 4px;
   width: fit-content;
+  position: relative;
+  height: 32px;
+  border-bottom-color: rgb(97, 97, 97);
+  border-left-color: rgb(209, 209, 209);
+  border-right-color: rgb(209, 209, 209);
+  border-top-color: rgb(209, 209, 209);
+  border-width: 1px;
+  border-style: solid;
+  display: flex;
   margin-bottom: $m-size;
 
   input {
@@ -10,7 +18,7 @@
     width: 4em;
     padding: $s-size 0;
     padding-right: calc($input-padding + $xs-size);
-
+    border-radius: 4px;
     text-align: right;
   }
   input:last-of-type {
@@ -21,13 +29,39 @@
     margin-left: -$input-padding;
     // border: 1px solid black;
     background-color: rgb(248, 248, 248);
-    padding: $s-size;
+
+    height: 100%;
+    padding: 0 $s-size $s-size $s-size;
+    border-radius: 4px;
   }
   input:focus-visible {
     outline: none;
   }
 }
-
-.location-input__container:focus-within {
+input:focus .location-input__container {
   outline: 2px solid blue;
+}
+
+.location-input__container-latitude::after,
+.location-input__container-longitude::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  height: 2px;
+  border-bottom: 2px solid #0f6cbd;
+  clip-path: inset(calc(100% - 2px) 0px 0px);
+  transform: scaleX(0);
+  transition-property: transform;
+  transition-duration: 100ms;
+  // transition-delay: 1ms;
+  transition-delay: cubic-bezier(0.7, 0, 1, 0.5);
+}
+.location-input__container-latitude:focus-within::after,
+.location-input__container-longitude:focus-within::after {
+  transform: scaleX(1);
+  transition-property: transform;
+  transition-duration: 300ms;
+  transition-delay: 1ms;
 }

@@ -79,6 +79,7 @@ function ColleaguesInput(props) {
   return (
     <form className="colleagues-input-container">
       <Combobox
+        appearance="underline"
         aria-labelledby={comboId}
         freeform
         placeholder={`Select ${"colleague"}`}
@@ -98,6 +99,7 @@ function ColleaguesInput(props) {
       </Combobox>
 
       <Combobox
+        appearance="underline"
         aria-labelledby={comboId}
         freeform
         placeholder={`Select ${"position"}`}
@@ -117,7 +119,7 @@ function ColleaguesInput(props) {
       </Combobox>
       <Button
         icon={<AddCircle24Regular />}
-        appearance="secondary"
+        appearance="transparent"
         onClick={() => handleChangeColleagues({ name, position })}
       >
         Add

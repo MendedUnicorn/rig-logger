@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import TripForm from './TripForm';
-import { getTripById } from '../selectors/tripSelectors';
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import TripFormV2 from "./TripFormV2";
+import { getTripById } from "../selectors/tripSelectors";
 
 const EditTripPage = () => {
   const { id } = useParams();
@@ -11,7 +11,7 @@ const EditTripPage = () => {
 
   return (
     <div>
-      <TripForm trip={data} />
+      <TripFormV2 trip={data} />
     </div>
   );
 };

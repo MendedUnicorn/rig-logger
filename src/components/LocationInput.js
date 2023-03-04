@@ -1,16 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import Cleave from 'cleave.js/react';
-import { multipleInputsInOne } from '../helpers/multipleInputsInOne';
+import React, { useEffect, useState } from "react";
+import Cleave from "cleave.js/react";
+import { multipleInputsInOne } from "../helpers/multipleInputsInOne";
 const LocationInput = ({ handleTitude, showSimple, defaultValue, type }) => {
-  const [deg, setDeg] = useState(defaultValue ? Math.floor(defaultValue) : '');
+  useEffect(() => {
+    setDeg(defaultValue ? Math.floor(defaultValue) : "");
+    setMinutes(defaultValue ? Math.floor((defaultValue % 1) * 60) : "");
+    setSeconds(
+      defaultValue ? ((((defaultValue % 1) * 60) % 1) * 60).toFixed(4) : ""
+    );
+  }, [defaultValue]);
+
+  const [deg, setDeg] = useState(defaultValue ? Math.floor(defaultValue) : "");
   const [minutes, setMinutes] = useState(
-    defaultValue ? Math.floor((defaultValue % 1) * 60) : ''
+    defaultValue ? Math.floor((defaultValue % 1) * 60) : ""
   );
   const [seconds, setSeconds] = useState(
-    defaultValue ? ((((defaultValue % 1) * 60) % 1) * 60).toFixed(4) : ''
+    defaultValue ? ((((defaultValue % 1) * 60) % 1) * 60).toFixed(4) : ""
   );
   const [simpleLocation, setSimpleLocation] = useState(
-    defaultValue ? defaultValue : ''
+    defaultValue ? defaultValue : ""
   );
 
   const [error, setError] = useState(null);
@@ -59,14 +67,14 @@ const LocationInput = ({ handleTitude, showSimple, defaultValue, type }) => {
   };
 
   return (
-    <div className='location-input'>
+    <div className="location-input">
       {!showSimple ? (
         <div className={`location-input__container-${type}`}>
           <input
-            type='text'
-            name='deg'
-            id='deg'
-            className='deg'
+            type="text"
+            name="deg"
+            id="deg"
+            className="deg"
             maxLength={2}
             value={deg}
             onChange={(e) => {
@@ -75,9 +83,9 @@ const LocationInput = ({ handleTitude, showSimple, defaultValue, type }) => {
           />
           <span>°</span>
           <input
-            type='text'
-            name='minutes'
-            id='minutes'
+            type="text"
+            name="minutes"
+            id="minutes"
             maxLength={2}
             value={minutes}
             onChange={(e) => {
@@ -86,9 +94,9 @@ const LocationInput = ({ handleTitude, showSimple, defaultValue, type }) => {
           />
           <span>'</span>
           <input
-            type='text'
-            name='seconds'
-            id='seconds'
+            type="text"
+            name="seconds"
+            id="seconds"
             maxLength={6}
             value={seconds}
             onChange={(e) => {
@@ -99,15 +107,15 @@ const LocationInput = ({ handleTitude, showSimple, defaultValue, type }) => {
         </div>
       ) : (
         <input
-          type='text'
-          className='location-simple'
+          type="text"
+          className="location-simple"
           value={simpleLocation}
           onChange={handleSimpleLocation}
         />
       )}
 
       {error && (
-        <div className='error'>
+        <div className="error">
           <p>Error</p>
           <p>{error}</p>
         </div>

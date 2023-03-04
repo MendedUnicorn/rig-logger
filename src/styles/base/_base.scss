@@ -25,3 +25,8 @@ button:disabled {
 .is-active {
   font-weight: bold;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
