@@ -30,10 +30,12 @@ function CheckBoxGroup({ handleChangeCheckbox, data }) {
   // }, [mwd, dd, jpg, seismic]);
 
   function handleChange(e, data, type) {
-    if (data) {
+    if (data.checked) {
       handleChangeCheckbox([...workedAs, type]);
+      console.log("wtf", data);
     } else {
       handleChangeCheckbox(workedAs.filter((pos) => pos !== type));
+      console.log("wtffff", data);
     }
   }
 

@@ -9,7 +9,7 @@ import {
   Option,
   Textarea,
 } from "@fluentui/react-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectOptions } from "../selectors/optionsSelectors";
 import { selectTopBottomColleague } from "../selectors/tripSelectors";
 import ComboBoxSingleInput from "./form/ComboBoxSingleInput";
@@ -26,6 +26,8 @@ import {
   DayOfWeek,
 } from "@fluentui/react-date-time";
 import { DateTime } from "luxon";
+import { startAddTrip, startUpdateTrip } from "../slices/tripsSlice";
+import { useNavigate } from "react-router-dom";
 
 const useStyle = makeStyles({
   datePicker: {
@@ -35,6 +37,7 @@ const useStyle = makeStyles({
 
 const Tripform = (props) => {
   const styles = useStyle();
+  const navigate = useNavigate();
   // Options from store
   let rigOptions = useSelector(selectOptions("rigs")).map((rig) => rig.name);
   let operatorOptions = useSelector(selectOptions("operators")).map(
@@ -52,9 +55,12 @@ const Tripform = (props) => {
     (position) => position.name
   );
   let bhaOptions = useSelector(selectOptions("tools")).map((tool) => tool.name);
-
+  //   let defaultLat;
   // State for form
+
   useEffect(() => {
+    console.log("d", props.dateFrom);
+
     setRig(props.trip ? props.trip.rig : "");
     setOperator(props.trip ? props.trip.operator : "");
     setContractor(props.trip ? props.trip.contractor : "");
@@ -62,14 +68,20 @@ const Tripform = (props) => {
     setDe(props.trip ? props.trip.de : "");
     setWorkedAs(props.trip ? props.trip.workedAs : "");
     setColleagues(props.trip ? props.trip.colleagues : []);
-    setRun(props.trip ? props.trip.runs : []);
+    setRun(props.trip ? props.trip.run : []);
     setNotes(props.trip ? props.trip.notes : "");
-    setStartDate(props.trip ? props.trip.dateFrom : {});
-    setEndDate(props.trip ? props.trip.dateTo : {});
-    setLatitude(props.trip ? +props.trip?.location.lat : {});
-    setLongitude(props.trip ? +props.trip?.location.long : {});
+    setStartDate(
+      props.trip ? DateTime.fromISO(props.trip.dateFrom).toJSDate() : null
+    );
+    setEndDate(
+      props.trip ? DateTime.fromISO(props.trip.dateTo).toJSDate() : null
+    );
+    // defaultLat = props?.trip.location.lat;
+    setLatitude(props.trip ? +props.trip?.location.lat : 0);
+    setLongitude(props.trip ? +props.trip?.location.long : 0);
     setLoading(false);
-  }, [props]);
+  }, []);
+
   const [rig, setRig] = useState("");
   const [operator, setOperator] = useState("");
   const [contractor, setContractor] = useState("");
@@ -87,10 +99,6 @@ const Tripform = (props) => {
 
   function handleSetWorkedAs(workedAsArr) {
     setWorkedAs(workedAsArr);
-    // if (arguments[0]) setWorkedAs((prevState) => [...prevState, "mwd"]);
-    // if (arguments[1]) setWorkedAs((prevState) => [...prevState, "dd"]);
-    // if (arguments[2]) setWorkedAs((prevState) => [...prevState, "jpg"]);
-    // if (arguments[3]) setWorkedAs((prevState) => [...prevState, "seismic"]);
   }
   function handleSetColleagues(colleague) {
     setColleagues((prevState) => [...prevState, colleague]);
@@ -109,14 +117,42 @@ const Tripform = (props) => {
     setRun((prevState) => prevState.filter((r) => r.run !== run));
   }
 
-  //   const initialValues = props.trip ? {
-  //     dateFrom: trip.dateFrom,
-  //     dateTo: trip.dateTo,
-  //     rig: trip.rig,
-  //     operator: trip.operator,
-  //     contractor: trip.contractor,
-  //     fsm: trip
-  //   }
+  const dispatch = useDispatch();
+
+  const handleSubmitTrip = (e) => {
+    e.preventDefault();
+    const dataToSubmit = {
+      rig: rig ? rig : "",
+      operator: operator ? operator : "",
+      contractor: contractor ? contractor : "",
+      workedAs,
+      dateFrom: startDate ? startDate.toISOString() : "",
+      dateTo: endDate ? endDate.toISOString() : "",
+      fsm: fsm ? fsm : "",
+      de: de ? de : "",
+      colleagues: colleagues ? colleagues : [],
+      run: run ? run : [],
+      notes: notes ? notes : "",
+      location: {
+        lat: latitude ? latitude.toString() : "",
+        long: longitude ? longitude.toString() : "",
+      },
+    };
+
+    if (props.trip) {
+      console.log("some", { ...dataToSubmit });
+      console.log("all", { ...props.trip, ...dataToSubmit });
+      dispatch(
+        startUpdateTrip(props.trip.id, { ...props.trip, ...dataToSubmit })
+      );
+    } else {
+      // add record
+      console.log(dataToSubmit);
+      dispatch(startAddTrip(dataToSubmit));
+    }
+
+    navigate("/trips");
+  };
 
   return (
     <div>
@@ -128,13 +164,13 @@ const Tripform = (props) => {
             <Label>From</Label>
             <DatePicker
               className={styles.datePicker}
-              value={DateTime.fromISO(startDate).toJSDate()}
+              value={startDate}
               onSelectDate={(date) => setStartDate(date)}
               firstDayOfWeek={DayOfWeek.Monday}
             />
             <Label>To</Label>
             <DatePicker
-              value={DateTime.fromISO(endDate).toJSDate()}
+              value={endDate}
               onSelectDate={(date) => setEndDate(date)}
               firstDayOfWeek={DayOfWeek.Monday}
             />
@@ -145,19 +181,19 @@ const Tripform = (props) => {
               options={rigOptions}
               setValue={setRig}
               labelText="Rig"
-              value={rig}
+              startValue={rig}
             />
             <ComboBoxSingleInput
               options={operatorOptions}
               setValue={setOperator}
               labelText="Operator"
-              value={operator}
+              startValue={operator}
             />
             <ComboBoxSingleInput
               options={contractorOptions}
               setValue={setContractor}
               labelText="Contractor"
-              value={contractor}
+              startValue={contractor}
             />
             <Divider />
           </div>
@@ -166,13 +202,13 @@ const Tripform = (props) => {
               options={fsmOptions}
               setValue={setFsm}
               labelText="FSM"
-              value={fsm}
+              startValue={fsm}
             />
             <ComboBoxSingleInput
               options={deOptions}
               setValue={setDe}
               labelText="DE"
-              value={de}
+              startValue={de}
             />
           </div>
 
@@ -215,14 +251,14 @@ const Tripform = (props) => {
           <div className="input-group">
             <Label>Latitude</Label>
             <LocationInput
-              handleTitude={() => ""}
+              handleTitude={setLatitude}
               showSimple={false}
               defaultValue={latitude}
               type="latitude"
             />
             <Label>Longitude</Label>
             <LocationInput
-              handleTitude={() => ""}
+              handleTitude={setLongitude}
               showSimple={false}
               defaultValue={longitude}
               type="longitude"
@@ -242,6 +278,12 @@ const Tripform = (props) => {
           </div>
         </>
       )}
+      <div className="input-group">
+        <Button onClick={(e) => handleSubmitTrip(e)} appearance="primary">
+          {props.trip ? "Save" : "Add New Trip"}
+        </Button>
+        <Button onClick={() => navigate("/trips")}>Cancel</Button>
+      </div>
     </div>
   );
 };

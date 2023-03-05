@@ -2,31 +2,58 @@
   display: flex;
   height: 100%;
 }
+.nav-text {
+  display: block;
+  text-indent: -200px;
+  position: relative;
+  transition: text-indent 400ms ease-in-out;
+}
 
 .sidebar {
+  position: fixed;
   display: flex;
   flex-direction: column;
-  width: 25%;
-  min-width: 15em;
+  width: 80px;
   background-color: rgb(241, 237, 232);
   padding: $m-size;
   height: 100vh;
+  transition: width 400ms;
+
+  &:hover {
+    width: 300px;
+    & + .detail {
+      transform: translateX(230px);
+      max-width: 100%;
+      opacity: 0.4;
+    }
+    span {
+      text-indent: 0;
+    }
+  }
 }
 .sidebar__title {
   border-bottom: 1px solid black;
 }
 
-a {
-  padding: $s-size;
-  margin-bottom: $s-size;
-  text-decoration: none;
-  border-radius: 5px;
-  background-color: rgb(255, 255, 255);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  color: black;
+.detail {
+  margin-left: 80px;
+  transition: transform 400ms;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-a:hover {
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-}
+// a {
+//   padding: $s-size;
+//   margin-bottom: $s-size;
+//   text-decoration: none;
+//   border-radius: 5px;
+//   background-color: rgb(255, 255, 255);
+//   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+//   color: black;
+// }
+
+// a:hover {
+//   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+//     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+// }

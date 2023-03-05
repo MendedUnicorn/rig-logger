@@ -8,6 +8,11 @@ function ComboBoxSingleInput(props) {
   const comboId = "test";
 
   useEffect(() => {
+    setCustomSearch(props.startValue);
+    console.log(props.value);
+  }, [props]);
+
+  useEffect(() => {
     setMatchingOptions(options);
   }, [options]);
 
@@ -45,6 +50,7 @@ function ComboBoxSingleInput(props) {
         placeholder={`Select ${labelText}`}
         onChange={onChange}
         onOptionSelect={onOptionSelect}
+        value={props.startValue}
         {...props}
       >
         {customSearch ? (

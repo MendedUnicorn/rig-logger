@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectTripsSortedBy } from '../selectors/tripSelectors';
-import { getAllTrips } from '../slices/tripsSlice';
-import TripCard from './TripCard';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectTripsSortedBy } from "../selectors/tripSelectors";
+import { getAllTrips } from "../slices/tripsSlice";
+import TripCard from "./TripCard";
 import {
   setStartDate,
   setEndDate,
   setTextFilter,
   sortBy,
-} from '../slices/filtersSlice';
-import ReactDatePicker from 'react-datepicker';
-import { DateTime } from 'luxon';
-import { format } from 'date-fns';
+} from "../slices/filtersSlice";
+import ReactDatePicker from "react-datepicker";
+import { DateTime } from "luxon";
+import { format } from "date-fns";
+import { Dropdown, Input, Label, Option } from "@fluentui/react-components";
+import { Search24Regular } from "@fluentui/react-icons";
+import { DatePicker, DayOfWeek } from "@fluentui/react-date-time";
+import TripsTable from "./TripsTable";
 
 const TripsPage = () => {
   const dispatch = useDispatch();
@@ -21,77 +25,81 @@ const TripsPage = () => {
   const endDate = useSelector((state) => state.filters.endDate);
 
   const totalTrips = useSelector((state) => state.trips.length);
-  const handleChange = (e) => {
-    dispatch(sortBy(e.target.value));
-  };
 
   const filteredData = useSelector(
     selectTripsSortedBy(sortByValue, filterText, startDate, endDate)
   );
+
+  const handleSortChange = (e, d) => {
+    dispatch(sortBy(d.optionValue));
+  };
   // fix text search filter
-  const handleTextSearchChange = (e) => {
-    dispatch(setTextFilter(e.target.value));
+  const handleTextSearchChange = (e, d) => {
+    dispatch(setTextFilter(d.value));
   };
   const handleStartDateChange = (e) => {
-    dispatch(setStartDate(e ? format(e, 'yyyy-MM-dd') : ''));
+    dispatch(setStartDate(e ? format(e, "yyyy-MM-dd") : ""));
   };
   const handleEndDateChange = (e) => {
-    dispatch(setEndDate(e ? format(e, 'yyyy-MM-dd') : ''));
+    dispatch(setEndDate(e ? format(e, "yyyy-MM-dd") : ""));
   };
 
   return (
-    <div className=''>
+    <div className="trip-page">
       <h2>All trips</h2>
       <p>
         Showing {filteredData.length} out of {totalTrips} trips
       </p>
-      <select name='' id='' onChange={handleChange} value={sortByValue}>
-        <option value='date'>Date</option>
-        <option value='length'>Length</option>
-        <option value='rig'>Rig</option>
-      </select>
-      <label htmlFor=''>Text Search</label>
-      <input
-        type='text'
-        name=''
-        id=''
-        onChange={handleTextSearchChange}
-        value={filterText}
-      />
-      <label htmlFor=''>From</label>
-      <ReactDatePicker
-        selected={startDate ? DateTime.fromISO(startDate).toJSDate() : null}
-        onChange={handleStartDateChange}
-        startDate={DateTime.fromISO(startDate).toJSDate()}
-        showIcon
-        isClearable
-        placeholderText='Select dates'
-        dateFormat={'MMM d, yyyy'}
-        className='calendar-picker'
-        showYearDropdown
-        dropdownMode='select'
-      />
-      <label htmlFor=''>To</label>
-      <ReactDatePicker
-        selected={endDate ? DateTime.fromISO(endDate).toJSDate() : ''}
-        onChange={handleEndDateChange}
-        startDate={DateTime.fromISO(endDate).toJSDate()}
-        showIcon
-        isClearable
-        placeholderText='Select dates'
-        dateFormat={'MMM d, yyyy'}
-        className='calendar-picker'
-        showYearDropdown
-        dropdownMode='select'
-      />
-      {filteredData &&
+      <div className="input-group">
+        <div className="input">
+          <Label>Sort By</Label>
+          <Dropdown onOptionSelect={handleSortChange} value={sortByValue}>
+            <Option text="Duration" value="length">
+              Duration
+            </Option>
+            <Option text="Date" value="date">
+              Date
+            </Option>
+            <Option text="Rig" value="rig">
+              Rig
+            </Option>
+          </Dropdown>
+        </div>
+        <div className="input">
+          <Label>Search</Label>
+          <Input
+            type="search"
+            placeholder="Enter search text.."
+            contentBefore={<Search24Regular />}
+            onChange={handleTextSearchChange}
+            value={filterText}
+          ></Input>
+        </div>
+      </div>
+      <div className="input-group">
+        <Label>From Date</Label>
+        <DatePicker
+          value={""}
+          onSelectDate={handleStartDateChange}
+          firstDayOfWeek={DayOfWeek.Monday}
+        />
+        <Label>To Date</Label>
+        <DatePicker
+          value={""}
+          onSelectDate={handleEndDateChange}
+          firstDayOfWeek={DayOfWeek.Monday}
+        />
+      </div>
+
+      {/* {filteredData &&
         filteredData.map((trip, i) => {
           return (
-            <div className=''>
+            <div className="">
               <TripCard trip={trip} key={trip.id} />
             </div>
           );
-        })}
+        })} */}
+      <TripsTable trips={filteredData} />
     </div>
   );
 };

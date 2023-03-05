@@ -113,6 +113,19 @@ function RunInput(props) {
     setSelectedOptions([]);
   }
 
+  function handleRunNumber(e, d) {
+    if (d.value !== undefined) {
+      setRun(d.value);
+    } else if (d.displayValue !== undefined) {
+      const newValue = parseFloat(d.displayValue);
+      if (!Number.isNaN(newValue)) {
+        setRun(newValue);
+      } else {
+        console.log("Cannot parse");
+      }
+    }
+  }
+
   return (
     <form className="colleagues-input-container">
       <div>
@@ -120,7 +133,7 @@ function RunInput(props) {
           input={{ className: styles.runInput }}
           // className={styles.runInput}
           value={run}
-          onChange={(e, d) => setRun(d.value)}
+          onChange={(e, d) => handleRunNumber(e, d)}
           appearance="underline"
           displayValue={`Run: ${run}`}
         />

@@ -17,9 +17,7 @@ const LocationInput = ({ handleTitude, showSimple, defaultValue, type }) => {
   const [seconds, setSeconds] = useState(
     defaultValue ? ((((defaultValue % 1) * 60) % 1) * 60).toFixed(4) : ""
   );
-  const [simpleLocation, setSimpleLocation] = useState(
-    defaultValue ? defaultValue : ""
-  );
+  const [simpleLocation, setSimpleLocation] = useState();
 
   const [error, setError] = useState(null);
 
@@ -31,7 +29,15 @@ const LocationInput = ({ handleTitude, showSimple, defaultValue, type }) => {
       const titude = +deg + +minutes / 60 + +seconds / 3600;
       handleTitude(titude);
     }
-  }, [deg, minutes, seconds, showSimple, simpleLocation]);
+  }, [
+    deg,
+    minutes,
+    seconds,
+    showSimple,
+    simpleLocation,
+    handleTitude,
+    defaultValue,
+  ]);
 
   useEffect(() => {
     const container = document.getElementsByClassName(

@@ -1,2 +1,18 @@
 .input-group {
+  //   box-shadow: $shadow-default;
+  padding: $m-size;
+  border-radius: 10px;
+  margin: $s-size;
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  margin-bottom: $s-size;
+  display: flex;
+  flex-direction: column;
+
+  label {
+    margin-bottom: 4px;
+  }
 }
