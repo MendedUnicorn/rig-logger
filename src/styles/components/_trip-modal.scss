@@ -1,0 +1,34 @@
+.trip-modal__container {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(219, 182, 140, 0.562);
+  position: fixed;
+  z-index: 100;
+  margin-left: 80px;
+}
+
+.trip-modal__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: white;
+  height: 80%;
+  width: 70%;
+  transform: translate(-50%, -50%);
+  padding: 4em;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  h2 {
+    margin-bottom: 1em;
+  }
+  h3 {
+    margin-bottom: 0.2em;
+  }
+  .spacing-container {
+    margin: 1em 0 2em;
+    background-color: #fefefe;
+  }
+}

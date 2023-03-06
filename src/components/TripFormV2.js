@@ -131,7 +131,7 @@ const Tripform = (props) => {
       fsm: fsm ? fsm : "",
       de: de ? de : "",
       colleagues: colleagues ? colleagues : [],
-      run: run ? run : [],
+      runs: run ? run : [],
       notes: notes ? notes : "",
       location: {
         lat: latitude ? latitude.toString() : "",

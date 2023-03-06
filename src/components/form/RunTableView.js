@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 });
 
 function RunTableView(props) {
-  const items = props && props.runs;
+  const items = props.runs ? props.runs : [];
   // const items = [
   //   { run: "1", bha: ["ag", "gww"], section: "12.25" },
   //   { run: "2", bha: ["telescope", "arc"], section: "17.5" },
@@ -103,11 +103,47 @@ function RunTableView(props) {
       ),
     }),
   ];
+  const columnsViewOnly = [
+    createTableColumn({
+      columnId: "run",
+      compare: (a, b) => {
+        return a.run.localCompare(b.run);
+      },
+      renderHeaderCell: () => "Run",
+      renderCell: (item) => (
+        <TableCellLayout truncate>{item.run}</TableCellLayout>
+      ),
+    }),
+    createTableColumn({
+      columnId: "section",
+      compare: (a, b) => {
+        return a.section.localCompare(b.section);
+      },
+      renderHeaderCell: () => "Section",
+      renderCell: (item) => (
+        <TableCellLayout truncate>{item.section} in.</TableCellLayout>
+      ),
+    }),
+    createTableColumn({
+      columnId: "bha",
+      compare: (a, b) => {
+        return a.bha.localCompare(b.bha);
+      },
+      renderHeaderCell: () => "BHA",
+      renderCell: (item) => (
+        <TableCellLayout truncate>
+          <ul className={styles.tagsList}>
+            {item.bha.map((tool) => Tag(tool))}
+          </ul>
+        </TableCellLayout>
+      ),
+    }),
+  ];
 
   return (
     <DataGrid
       items={items}
-      columns={columns}
+      columns={props.viewOnly ? columnsViewOnly : columns}
       resizableColumns
       getRowId={(item) => item.run}
       // onColumnResize={(event, { columnId, width }) => {
@@ -128,8 +164,8 @@ function RunTableView(props) {
         },
         bha: {
           minWidth: 300,
-          defaultWidth: "65%",
-          idealWidth: "65%",
+          defaultWidth: props.viewOnly ? "80%" : "65%",
+          idealWidth: props.viewOnly ? "80%" : "65%",
         },
         remove: {
           minWidth: 40,
