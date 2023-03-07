@@ -61,24 +61,26 @@ const Tripform = (props) => {
   useEffect(() => {
     console.log("d", props.dateFrom);
 
-    setRig(props.trip ? props.trip.rig : "");
-    setOperator(props.trip ? props.trip.operator : "");
-    setContractor(props.trip ? props.trip.contractor : "");
-    setFsm(props.trip ? props.trip.fsm : "");
-    setDe(props.trip ? props.trip.de : "");
-    setWorkedAs(props.trip ? props.trip.workedAs : "");
-    setColleagues(props.trip ? props.trip.colleagues : []);
-    setRun(props.trip ? props.trip.run : []);
-    setNotes(props.trip ? props.trip.notes : "");
+    setRig(props.trip?.rig ? props.trip.rig : "");
+    setOperator(props.trip?.operator ? props.trip.operator : "");
+    setContractor(props.trip?.contractor ? props.trip.contractor : "");
+    setFsm(props.trip?.fsm ? props.trip.fsm : "");
+    setDe(props.trip?.de ? props.trip.de : "");
+    setWorkedAs(props.trip?.workedAs ? props.trip.workedAs : []);
+    setColleagues(props.trip?.colleagues ? props.trip.colleagues : []);
+    setRuns(props?.trip?.runs ? props.trip.runs : []);
+    setNotes(props.trip?.notes ? props.trip.notes : "");
     setStartDate(
-      props.trip ? DateTime.fromISO(props.trip.dateFrom).toJSDate() : null
+      props.trip?.dateFrom
+        ? DateTime.fromISO(props.trip.dateFrom).toJSDate()
+        : ""
     );
     setEndDate(
-      props.trip ? DateTime.fromISO(props.trip.dateTo).toJSDate() : null
+      props.trip?.dateTo ? DateTime.fromISO(props.trip.dateTo).toJSDate() : ""
     );
     // defaultLat = props?.trip.location.lat;
-    setLatitude(props.trip ? +props.trip?.location.lat : 0);
-    setLongitude(props.trip ? +props.trip?.location.long : 0);
+    setLatitude(props?.trip?.location ? +props.trip?.location.lat : 0);
+    setLongitude(props.trip?.location ? +props.trip?.location.long : 0);
     setLoading(false);
   }, []);
 
@@ -89,7 +91,7 @@ const Tripform = (props) => {
   const [de, setDe] = useState("");
   const [workedAs, setWorkedAs] = useState([]);
   const [colleagues, setColleagues] = useState([]);
-  const [run, setRun] = useState([]);
+  const [runs, setRuns] = useState([]);
   const [notes, setNotes] = useState("");
   const [startDate, setStartDate] = useState({});
   const [endDate, setEndDate] = useState({});
@@ -110,11 +112,15 @@ const Tripform = (props) => {
       )
     );
   }
-  function handleSetRun(run) {
-    setRun((prevState) => [...prevState, run]);
+  function handleSetRuns(run) {
+    if (!runs) {
+      setRuns(run);
+    } else {
+      setRuns((prevState) => [...prevState, run]);
+    }
   }
   function handleRemoveRun(run) {
-    setRun((prevState) => prevState.filter((r) => r.run !== run));
+    setRuns((prevState) => prevState.filter((r) => r.run !== run));
   }
 
   const dispatch = useDispatch();
@@ -131,7 +137,7 @@ const Tripform = (props) => {
       fsm: fsm ? fsm : "",
       de: de ? de : "",
       colleagues: colleagues ? colleagues : [],
-      runs: run ? run : [],
+      runs: runs ? runs : [],
       notes: notes ? notes : "",
       location: {
         lat: latitude ? latitude.toString() : "",
@@ -238,12 +244,15 @@ const Tripform = (props) => {
           </div>
           <div className="input-group">
             <Label>Runs</Label>
-            <RunInput bhaOptions={bhaOptions} handleChangeRuns={handleSetRun} />
+            <RunInput
+              bhaOptions={bhaOptions}
+              handleChangeRuns={handleSetRuns}
+            />
           </div>
           <div className="input-group">
-            {run?.length > 0 ? (
+            {runs?.length > 0 ? (
               <RunTableView
-                runs={run}
+                runs={runs}
                 handleRemoveRun={handleRemoveRun}
               ></RunTableView>
             ) : null}
@@ -253,14 +262,18 @@ const Tripform = (props) => {
             <LocationInput
               handleTitude={setLatitude}
               showSimple={false}
-              defaultValue={latitude}
+              defaultValue={
+                props?.trip?.location?.lat ? props.trip.location.lat : ""
+              }
               type="latitude"
             />
             <Label>Longitude</Label>
             <LocationInput
               handleTitude={setLongitude}
               showSimple={false}
-              defaultValue={longitude}
+              defaultValue={
+                props?.trip?.location?.long ? props.trip.location.long : ""
+              }
               type="longitude"
             />
           </div>

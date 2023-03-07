@@ -1,3 +1,10 @@
+.options-page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .options-header {
   display: flex;
   box-shadow: $shadow-default;
@@ -58,7 +65,7 @@
 .option-element__main__buttons__delete-button {
   border: none;
   height: 100%;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   font-weight: bold;
 }
 .option-element__main__buttons__edit-button {

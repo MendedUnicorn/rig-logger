@@ -1,0 +1,20 @@
+.import-from-dawinci-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 100px;
+  max-width: 150px;
+  justify-content: center;
+
+  input[type="file"] {
+    display: none;
+  }
+}
+
+.import-from-dawinci__filename {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #eee;
+  padding: $xs-size;
+  margin-bottom: $l-size;
+}

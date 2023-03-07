@@ -2,6 +2,7 @@ import { Tab, TabList } from "@fluentui/react-components";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectOptions } from "../selectors/optionsSelectors";
+import ImportFromDawinci from "./ImportFromDawinci";
 
 import OptionsCategory from "./OptionsCategory";
 import OptionTable from "./OptionTable";
@@ -44,8 +45,15 @@ const OptionsPage = () => {
         <Tab id="tools" value="tools">
           Tools
         </Tab>
+        <Tab id="dawinci" value="dawinci">
+          Import from MinDawinci
+        </Tab>
       </TabList>
-      {selectedValue && <OptionTable type={selectedValue} data={data} />}
+      {selectedValue === "dawinci" ? (
+        <ImportFromDawinci />
+      ) : (
+        selectedValue && <OptionTable type={selectedValue} data={data} />
+      )}
     </div>
   );
 };

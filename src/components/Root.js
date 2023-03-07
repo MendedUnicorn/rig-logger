@@ -34,6 +34,7 @@ const Root = () => {
     "positions",
   ];
   options.forEach((opt) => dispatch(startSetOptions(opt)));
+  console.log("fetched data");
   const styles = useStyles();
 
   // dispatch(startAddOption('rigs', { name: 'Balder' }));

@@ -6,6 +6,7 @@ import "./styles/styles.scss";
 import store from "./store/configureStore";
 import { Provider as StoreProvider } from "react-redux";
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
+import "react-tooltip/dist/react-tooltip.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

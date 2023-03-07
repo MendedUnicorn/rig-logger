@@ -3,6 +3,12 @@
   flex-direction: column;
   max-width: 80%;
   justify-content: center;
+  align-items: center;
+
+  .input-group {
+    width: 100%;
+    max-width: 30em;
+  }
 }
 
 .overview-container {

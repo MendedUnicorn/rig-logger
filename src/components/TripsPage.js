@@ -1,29 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectTripsSortedBy } from "../selectors/tripSelectors";
-import { getAllTrips } from "../slices/tripsSlice";
-import TripCard from "./TripCard";
+
 import {
   setStartDate,
   setEndDate,
   setTextFilter,
   sortBy,
 } from "../slices/filtersSlice";
-import ReactDatePicker from "react-datepicker";
-import { DateTime } from "luxon";
+
 import { format } from "date-fns";
 import {
   Button,
   Dropdown,
   Input,
   Label,
+  makeStyles,
   Option,
 } from "@fluentui/react-components";
-import { Search24Regular, Edit24Regular } from "@fluentui/react-icons";
+import {
+  Search24Regular,
+  Edit24Regular,
+  Delete24Regular,
+  Dismiss24Regular,
+} from "@fluentui/react-icons";
 import { DatePicker, DayOfWeek } from "@fluentui/react-date-time";
 import TripsTable from "./TripsTable";
 import ColleaguesTableView from "./form/ColleaguesTableView";
 import RunTableView from "./form/RunTableView";
+import { useNavigate } from "react-router-dom";
+import { startRemoveTrip } from "../slices/tripsSlice";
+
+const useStyle = makeStyles({
+  buttonGap: {
+    marginRight: "10px",
+  },
+  buttonMoveRight: {
+    marginLeft: "auto",
+  },
+});
 
 const TripsPage = () => {
   const dispatch = useDispatch();
@@ -52,6 +67,15 @@ const TripsPage = () => {
   };
   const handleEndDateChange = (e) => {
     dispatch(setEndDate(e ? format(e, "yyyy-MM-dd") : ""));
+  };
+
+  const navigate = useNavigate();
+  const styles = useStyle();
+
+  const handleDelete = (id) => {
+    dispatch(startRemoveTrip(id));
+    setModalOpen(false);
+    setModalData(null);
   };
 
   return (
@@ -89,10 +113,35 @@ const TripsPage = () => {
             <div className="spacing-container">
               <RunTableView runs={modalData.runs} viewOnly />
             </div>
-            <Button icon={<Edit24Regular />}>Edit</Button>
+            <div className="group-sidebyside">
+              <div className="buttons-group">
+                <Button
+                  className={styles.buttonGap}
+                  appearance="primary"
+                  icon={<Edit24Regular />}
+                  onClick={() => navigate(`/trip/${modalData.id}/edit`)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  icon={<Delete24Regular />}
+                  onClick={() => handleDelete(modalData.id)}
+                >
+                  Delete
+                </Button>
+              </div>
+              <Button
+                className={styles.buttonMoveRight}
+                icon={<Dismiss24Regular />}
+                onClick={() => setModalOpen(false)}
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </div>
       )}
+
       <div className="trip-page">
         <h2>All trips</h2>
         <p>
