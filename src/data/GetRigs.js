@@ -14,7 +14,7 @@ import { selectOptions } from "../selectors/optionsSelectors";
 import { startAddOption } from "../slices/optionsSlice";
 import { checkTripOverlap } from "../helpers/dateValidation";
 
-const ImportFromDawinci = () => {
+const GetRigs = () => {
   const [file, setFile] = useState("null");
   const rigs = useSelector(selectOptions("rigs"));
   const dispatch = useDispatch();
@@ -25,28 +25,17 @@ const ImportFromDawinci = () => {
     const csv = file;
     const reader = new FileReader();
 
+    const data = {};
     reader.onload = async (e) => {
       const text = e.target.result;
-      const trips = processCSV(text);
-      trips.map(async (trip) => {
-        if (!checkTripOverlap(trip, oldTrips)) {
-          // change to dispatch so store updates too
-          const docRef = await addDoc(collection(db, "trips"), trip);
-        } else {
-          console.log("trip already exists", trip.rig, trip);
-        }
+      const lines = text.split("\r\n");
+
+      lines.map((line) => {
+        const d = line.split(",");
+        data[d[0]] = d[1];
       });
-      // Load any non existent rigs as options
-      const uniqueRigs = [...new Set(trips.map((trip) => trip.rig))]; //removes any duplicate rigs from the trips imported
-      console.log(uniqueRigs, "unique rigs");
-      await uniqueRigs.map(async (rigName) => {
-        if (!rigs.some((rig) => rig.name === rigName)) {
-          await dispatch(startAddOption("rigs", { name: rigName }));
-          console.log("added new rig to options", rigName);
-        }
-      });
-      navigate("/trips");
     };
+    console.log(data);
     reader.readAsText(file);
   };
 
@@ -63,15 +52,15 @@ const ImportFromDawinci = () => {
               setFile(e.target.files[0]);
             }}
           />
-          Chose a file..
+          Upload File
         </label>
       </Button>
       <p className="import-from-dawinci__filename">{file.name}</p>
       <Button appearance="primary" onClick={() => handleSubmit(file)}>
-        Import from MinDawinci
+        Load some rigs
       </Button>
     </div>
   );
 };
 
-export default ImportFromDawinci;
+export default GetRigs;

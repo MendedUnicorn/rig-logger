@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useParams } from "react-router-dom";
 import { setAllTrips } from "../slices/tripsSlice";
 import { app, db } from "../firebase/firebaseConfig";
 import { startAddOption, startSetOptions } from "../slices/optionsSlice";
@@ -11,6 +11,7 @@ import {
   Options24Regular,
   DataHistogram24Regular,
 } from "@fluentui/react-icons";
+import GetRigs from "../data/GetRigs";
 
 const useStyles = makeStyles({
   root: { color: "red" },
@@ -20,7 +21,7 @@ const useStyles = makeStyles({
   },
 });
 
-const Root = () => {
+const Root = (props) => {
   const dispatch = useDispatch();
   dispatch(setAllTrips());
   const options = [
@@ -33,13 +34,19 @@ const Root = () => {
     "tools",
     "positions",
   ];
+  const location = useLocation();
+  const [currentTab, setCurrentTab] = useState(location.pathname.substring(1));
   options.forEach((opt) => dispatch(startSetOptions(opt)));
   console.log("fetched data");
   const styles = useStyles();
 
+  useEffect(() => {
+    setCurrentTab(location.pathname.substring(1));
+  }, [location.pathname]);
+
   // dispatch(startAddOption('rigs', { name: 'Balder' }));
   // dispatch(startAddOption('contractors', { name: 'Archer' }));
-
+  console.log(location.pathname.substring(1));
   return (
     <div className="root">
       <div className="sidebar">
@@ -50,7 +57,8 @@ const Root = () => {
           vertical
           size="large"
           defaultSelectedValue={"tab1"}
-          onTabSelect={(e, d) => console.log(e, d)}
+          onTabSelect={(e, d) => setCurrentTab(location.pathname.substring(1))}
+          selectedValue={currentTab}
         >
           <NavLink to="overview">
             <Tab

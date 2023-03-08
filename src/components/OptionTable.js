@@ -38,6 +38,9 @@ const useStyles = makeStyles({
     paddingInlineStart: 0,
     // maxWidth: "250px",
   },
+  list: {
+    width: "100%",
+  },
 });
 
 function OptionTable(props) {
@@ -122,6 +125,7 @@ function OptionTable(props) {
     <>
       <NewOptionInput type={props.type} />
       <DataGrid
+        className={styles.list}
         items={items}
         columns={columns}
         resizableColumns

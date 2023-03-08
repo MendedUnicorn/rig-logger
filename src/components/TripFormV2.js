@@ -28,6 +28,7 @@ import {
 import { DateTime } from "luxon";
 import { startAddTrip, startUpdateTrip } from "../slices/tripsSlice";
 import { useNavigate } from "react-router-dom";
+import ToolbarOptions from "./Toolbar";
 
 const useStyle = makeStyles({
   datePicker: {
@@ -166,6 +167,7 @@ const Tripform = (props) => {
         <p>Loading</p>
       ) : (
         <>
+          <ToolbarOptions />
           <div className="input-group">
             <Label>From</Label>
             <DatePicker

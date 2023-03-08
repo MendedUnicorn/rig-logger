@@ -1,5 +1,4 @@
 import {
-  Button,
   createTableColumn,
   DataGrid,
   DataGridBody,
@@ -18,20 +17,22 @@ import {
 } from "@fluentui/react-components";
 import { CalendarLtr24Regular } from "@fluentui/react-icons";
 import { DateTime } from "luxon";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { ReactComponent as OilRigIcon } from "../assets/oil-platform.svg";
 import { ReactComponent as OilRigIcon2 } from "../assets/oil-platform-2.svg";
 import { ReactComponent as WorkerIcon } from "../assets/worker.svg";
 import { ReactComponent as CompanyManIcon } from "../assets/companyman.svg";
-import { FOCUSABLE_SELECTOR } from "@testing-library/user-event/dist/utils";
 
 const useStyle = makeStyles({
   root: {},
 });
 
 function TripsTable(props) {
-  const items = props.trips;
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    setItems(props.trips);
+  }, [props]);
+
   const styles = useStyle();
 
   const columns = [
@@ -50,7 +51,7 @@ function TripsTable(props) {
               alignItems: "flex-end",
             }}
           >
-            Rig <OilRigIcon2 height={"20px"} width="20px" />
+            Rig <OilRigIcon2 height={"20px"} width={"20px"} />
           </p>
         );
       },
@@ -72,7 +73,7 @@ function TripsTable(props) {
             alignItems: "flex-end",
           }}
         >
-          Operator <CompanyManIcon height={"20px"} width="20px" />
+          Operator <CompanyManIcon height={"20px"} width={"20px"} />
         </p>
       ),
       renderCell: (item) => (
@@ -93,7 +94,7 @@ function TripsTable(props) {
             alignItems: "flex-end",
           }}
         >
-          Contractor <WorkerIcon height={"20px"} width="20px" />
+          Contractor <WorkerIcon height={"20px"} width={"20px"} />
         </p>
       ),
       renderCell: (item) => (
@@ -109,7 +110,7 @@ function TripsTable(props) {
         <p
           style={{
             display: "flex",
-            justifyContent: "space-around",
+            justifyContent: "flex-end",
             width: "100%",
             alignItems: "flex-end",
           }}
@@ -137,7 +138,7 @@ function TripsTable(props) {
         <p
           style={{
             display: "flex",
-            justifyContent: "space-around",
+            justifyContent: "flex-end",
             width: "100%",
             alignItems: "flex-end",
           }}
@@ -161,7 +162,6 @@ function TripsTable(props) {
   return (
     <div className="trip-table">
       <DataGrid
-        className={styles.root}
         items={items}
         columns={columns}
         resizableColumns
@@ -186,27 +186,27 @@ function TripsTable(props) {
 
         columnSizingOptions={{
           rig: {
-            minWidth: 40,
+            minWidth: "40px",
             defaultWidth: "25%",
             idealWidth: "25%",
           },
           operator: {
             defaultWidth: "25%",
-            minWidth: 60,
+            minWidth: "60px",
             idealWidth: "25%",
           },
           contractor: {
-            minWidth: 40,
+            minWidth: "40px",
             defaultWidth: "20%",
             idealWidth: "20%",
           },
           from: {
-            minWidth: 40,
+            minWidth: "40px",
             defaultWidth: "15%",
             idealWidth: "15%",
           },
           to: {
-            minWidth: 40,
+            minWidth: "40px",
             defaultWidth: "15%",
             idealWidth: "15%",
           },
@@ -214,7 +214,7 @@ function TripsTable(props) {
       >
         <DataGridHeader>
           <DialogTrigger action="open">
-            <DataGridRow onClick={() => console.log("ffwef")}>
+            <DataGridRow>
               {({ renderHeaderCell }) => (
                 <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>
               )}
@@ -262,7 +262,5 @@ function TripsTable(props) {
     </div>
   );
 }
-<a href="https://www.vecteezy.com/free-vector/oil-rig">
-  Oil Rig Vectors by Vecteezy
-</a>;
+
 export default TripsTable;

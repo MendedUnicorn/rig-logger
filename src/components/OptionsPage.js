@@ -1,6 +1,7 @@
 import { Tab, TabList } from "@fluentui/react-components";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import GetRigs from "../data/GetRigs";
 import { selectOptions } from "../selectors/optionsSelectors";
 import ImportFromDawinci from "./ImportFromDawinci";
 

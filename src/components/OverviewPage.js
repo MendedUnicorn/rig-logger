@@ -28,6 +28,7 @@ import {
 import worldData from "../data/countries.geojson";
 import { Tooltip } from "react-tooltip";
 import worldDataSmall from "../data/custom.geojson";
+import GetRigs from "../data/GetRigs";
 
 const CustomMarker = ({ key, coordinates, rig, setTooltip }) => {
   const ctx = useZoomPanContext();
@@ -129,8 +130,8 @@ const OverviewPage = () => {
 
         <ComposableMap
           projection={"geoMercator"}
-          width={document.querySelector("body").clientWidth}
-          height={500}
+          // width={document.querySelector("body").clientWidth}
+          // height={500}
           projectionConfig={{
             rotate: [-10.0, -53.0, 0],
             scale: 2000,
@@ -174,10 +175,6 @@ const OverviewPage = () => {
           <Ranked number={3} category={"operator"} />
           <Ranked number={3} category={"contractor"} />
         </div>
-
-        <ImportFromDawinci />
-        {/* {dataFiltered &&
-        dataFiltered.map((trip) => <TripCard trip={trip} key={trip.id} />)} */}
       </div>
     );
   }
